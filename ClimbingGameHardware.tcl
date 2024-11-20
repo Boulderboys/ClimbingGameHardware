@@ -163,7 +163,6 @@ set_property -name "webtalk.modelsim_export_sim" -value "3" -objects $obj
 set_property -name "webtalk.questa_export_sim" -value "3" -objects $obj
 set_property -name "webtalk.riviera_export_sim" -value "3" -objects $obj
 set_property -name "webtalk.vcs_export_sim" -value "3" -objects $obj
-set_property -name "webtalk.xcelium_export_sim" -value "3" -objects $obj
 set_property -name "webtalk.xsim_export_sim" -value "3" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
 
