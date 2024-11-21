@@ -1,9 +1,9 @@
 #*****************************************************************************************
-# Vivado (TM) v2024.1 (64-bit)
+# Vivado (TM) v2024.1.2 (64-bit)
 #
 # ClimbingGameHardware.tcl: Tcl script for re-creating project 'ClimbingGameHardware'
 #
-# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# IP Build 5164407 on Fri Sep  6 08:18:11 MDT 2024
 #
 # This file contains the Vivado Tcl commands for re-creating the project to the state*
 # when this script was generated. In order to re-create the project, please source this
@@ -18,9 +18,9 @@
 proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
+ "[file normalize "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/VgaTest.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/Board.vhd"]"\
- "[file normalize "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"]"\
  "[file normalize "$origin_dir/src/constraints/Nexys_A7_100T-Master.xdc"]"\
   ]
   foreach ifile $files {
@@ -165,12 +165,22 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
+ [file normalize "${origin_dir}/ips/clk_wiz_0/clk_wiz_0.xci"] \
  [file normalize "${origin_dir}/src/vhdl/VgaTest.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/Board.vhd"] \
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
+set file "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
 set file "$origin_dir/src/vhdl/VgaTest.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -190,27 +200,6 @@ set obj [get_filesets sources_1]
 set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
 set_property -name "top" -value "Board" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
-
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
-set files [list \
- [file normalize "${origin_dir}/ips/clk_wiz_0/clk_wiz_0.xci"] \
-]
-add_files -norecurse -fileset $obj $files
-
-# Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
-
-
-# Set 'sources_1' fileset file properties for local files
-# None
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -279,8 +268,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
-set_property -name "incremental_checkpoint" -value "$proj_dir/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -503,7 +490,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
