@@ -34,12 +34,25 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Board is
     Port (
         SW : in std_logic_vector(15 downto 0);
-        LED : out std_logic_vector(15 downto 0) 
+        LED : out std_logic_vector(15 downto 0);
+        CPU_RESETN : in std_logic;
+        CLK100MHZ : in std_logic;
+        UART_RXD_OUT : in std_logic;
+        UART_TXD_IN : out std_logic
     );
 end Board;
 
 architecture Structural of Board is
-
+    component MicroblazeNexysWrapper is
+        Port (
+            SW : in std_logic_vector(15 downto 0);
+            LED : out std_logic_vector(15 downto 0);
+            CPU_RESETN : in std_logic;
+            CLK100MHZ : in std_logic;
+            UART_RXD_OUT : in std_logic;
+            UART_TXD_IN : out std_logic
+        );
+    end component MicroblazeNexysWrapper;
 begin
-    LED <= SW;
+    Microblaze : MicroblazeNexysWrapper port map(SW, LED, CPU_RESETN, CLK100MHZ, UART_RXD_OUT, UART_TXD_IN);
 end Structural;
