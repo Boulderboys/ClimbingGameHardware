@@ -33,7 +33,6 @@ architecture Behavioral of vgaTest is
     constant V_TOTAL     : integer := 1066;
     
         -- Signalen voor klokbeheer
-    signal clk_108mhz : std_logic;
     signal locked : std_logic;
     
         -- Instantieer de Clocking Wizard
@@ -47,22 +46,13 @@ architecture Behavioral of vgaTest is
     end component;
 
 begin
-    
-    pll_inst : clk_wiz_0
-    port map (
-       clk_in1 => clk,          -- Verbind met de 100 MHz ingangsklok
-       reset => reset,          -- Verbind reset
-       locked => locked,        -- Indiceert of de PLL stabiel is
-       clk_out1 => clk_108mhz   -- De gegenereerde 108 MHz klok
-    );
-
     -- Horizontale en verticale teller
-    process(clk_108mhz, reset)
+    process(clk, reset)
     begin
         if reset = '1' then
             h_cnt <= (others => '0');
             v_cnt <= (others => '0');
-        elsif rising_edge(clk_108mhz) then
+        elsif rising_edge(clk) then
             if h_cnt = H_TOTAL - 1 then
                 h_cnt <= (others => '0');
                 if v_cnt = V_TOTAL - 1 then

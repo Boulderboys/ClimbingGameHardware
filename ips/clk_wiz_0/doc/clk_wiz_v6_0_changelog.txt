@@ -1,3 +1,11 @@
+2024.1.2:
+ * Version 6.0 (Rev. 14)
+ * No changes
+
+2024.1.1:
+ * Version 6.0 (Rev. 14)
+ * No changes
+
 2024.1:
  * Version 6.0 (Rev. 14)
  * General: IP packaging adjustments to address warnings from IP Packager integrity check
