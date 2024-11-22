@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity vgaTest is
+entity VgaTest is
     Port (
         vga_r : out std_logic_vector(3 downto 0);
         vga_g : out std_logic_vector(3 downto 0);
@@ -12,7 +12,7 @@ entity vgaTest is
         clk : in std_logic;
         reset : in std_logic
     );
-end vgaTest;
+end VgaTest;
 
 architecture Behavioral of vgaTest is
 
@@ -35,16 +35,6 @@ architecture Behavioral of vgaTest is
         -- Signalen voor klokbeheer
     signal locked : std_logic;
     
-        -- Instantieer de Clocking Wizard
-    component clk_wiz_0 is
-        Port (
-            clk_in1 : in std_logic;
-            reset   : in std_logic;
-            locked  : out std_logic;
-            clk_out1 : out std_logic
-        );
-    end component;
-
 begin
     -- Horizontale en verticale teller
     process(clk, reset)

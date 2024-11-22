@@ -58,7 +58,7 @@ architecture Structural of Board is
             clk_out2 : out std_logic
         );
     end component;
-    component vgaTest is
+    component VgaTest is
         Port (
             vga_r : out std_logic_vector(3 downto 0);
             vga_g : out std_logic_vector(3 downto 0);
@@ -68,7 +68,7 @@ architecture Structural of Board is
             clk : in std_logic;
             reset : in std_logic
         );
-    end component vgaTest;
+    end component VgaTest;
     component MicroblazeNexysWrapper is
         Port (
             SW : in std_logic_vector(15 downto 0);
