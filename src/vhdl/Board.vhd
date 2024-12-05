@@ -31,10 +31,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
+
 entity Board is
     Port (
+        BTNC : in std_logic;
+        BTNU : in std_logic;
+        BTNL : in std_logic;
+        BTNR : in std_logic;
         SW : in std_logic_vector(15 downto 0);
         LED : out std_logic_vector(15 downto 0);
+        JA : inout std_logic_vector(11 downto 0);
+        JB : inout std_logic_vector(11 downto 0);
+        ov7670_data : inout std_logic_vector(7 downto 0); -- defined in constraints file
         
         VGA_R : out std_logic_vector(3 downto 0);
         VGA_G : out std_logic_vector(3 downto 0);
@@ -55,7 +63,8 @@ architecture Structural of Board is
             reset   : in std_logic;
             locked  : out std_logic;
             clk_out1 : out std_logic;
-            clk_out2 : out std_logic
+            clk_out2 : out std_logic;
+            clk_out3 : out std_logic
         );
     end component;
     component VgaTest is
@@ -79,13 +88,46 @@ architecture Structural of Board is
             UART_TXD_IN : out std_logic
         );
     end component MicroblazeNexysWrapper;
+    COMPONENT OV7670Top IS
+    PORT (
+        clk : IN STD_LOGIC;
+        scl : INOUT STD_LOGIC;
+        sda : INOUT STD_LOGIC;
+        ov7670_vsync : IN STD_LOGIC;
+        ov7670_href : IN STD_LOGIC;
+        ov7670_pclk : IN STD_LOGIC;
+        ov7670_xclk : OUT STD_LOGIC;
+        ov7670_data : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+        btn : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        ov7670_pwdn : OUT STD_LOGIC;
+        ov7670_reset : OUT STD_LOGIC;
+        --sseg_o : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
+        --sseg_cs_o : OUT STD_LOGIC;
+        VGA_HS_O : OUT STD_LOGIC;
+        VGA_VS_O : OUT STD_LOGIC;
+        VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+        VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+        VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+        frame_buffer_to_vga : IN STD_LOGIC
+
+    );
+END COMPONENT OV7670Top;
     
-    signal clk_108mhz : std_logic;
-    signal clk_90mhz : std_logic;
+    signal clk_108mhz_vga : std_logic;
+    signal clk_90mhz_microblaze : std_logic;
+    signal clk_101mhz_camera : std_logic;
     signal locked : std_logic;
 begin
-    clk_wiz : clk_wiz_0 port map(CLK100MHZ, '0', locked, clk_108mhz, clk_90mhz);
-    Microblaze : MicroblazeNexysWrapper port map(SW, LED, CPU_RESETN, clk_90mhz, UART_RXD_OUT, UART_TXD_IN);
-    vgascreen: vgaTest port map (vga_r => VGA_R, vga_g => VGA_G, vga_b => VGA_B, vga_hs => VGA_HS, 
-    vga_vs => VGA_VS, clk => clk_108mhz, reset => '0');
+    camera : OV7670Top port map(clk => clk_101mhz_camera, scl => JB(9), sda => JB(4), 
+                                     ov7670_vsync => JB(8), ov7670_href => JB(3), ov7670_pclk => JB(10), 
+                                     ov7670_xclk => JB(2),
+                                     ov7670_data => ov7670_data, btn(0) => BTNC, btn(1) => BTNU,
+                                     btn(2) => BTNL, btn(3) => BTNR, ov7670_pwdn => JA(1), ov7670_reset => JA(7),
+                                     VGA_HS_O => VGA_HS, VGA_VS_O => VGA_VS, VGA_R => VGA_R, VGA_B => VGA_B,
+                                     VGA_G => VGA_G, frame_buffer_to_vga => '1'
+                                     );
+    clk_wiz : clk_wiz_0 port map(CLK100MHZ, '0', locked, clk_108mhz_vga, clk_90mhz_microblaze, clk_101mhz_camera);
+    Microblaze : MicroblazeNexysWrapper port map(SW, LED, CPU_RESETN, clk_90mhz_microblaze, UART_RXD_OUT, UART_TXD_IN);
+--    vgascreen: vgaTest port map (vga_r => VGA_R, vga_g => VGA_G, vga_b => VGA_B, vga_hs => VGA_HS, 
+--    vga_vs => VGA_VS, clk => clk_108mhz_vga, reset => '0');
 end Structural;
