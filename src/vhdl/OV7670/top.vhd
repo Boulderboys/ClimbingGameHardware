@@ -22,8 +22,7 @@ ENTITY OV7670Top IS
         VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
         VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
         VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
-        frame_buffer_out_processing : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
-        frame_buffer_to_vga : IN STD_LOGIC
+        frame_buffer_out_processing : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
     );
 END OV7670Top;
 
@@ -32,7 +31,6 @@ ARCHITECTURE rtl OF OV7670Top IS
     --hallo
     SIGNAL rst : STD_LOGIC := '0';
     SIGNAL edge : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL frame_buffer_out_vga : STD_LOGIC_VECTOR(11 DOWNTO 0);
 
     SIGNAL pxl_clk : STD_LOGIC := '0';
     
@@ -92,13 +90,6 @@ BEGIN
     PROCESS (clk)
     BEGIN
         IF rising_edge(clk) THEN
-            if frame_buffer_to_vga = '0' then
-                frame_buffer_out_processing <= doutb;
-                frame_buffer_out_vga <= (others => '0');
-            else
-                frame_buffer_out_processing <= (others => '0');
-                frame_buffer_out_vga <= doutb;
-            end if;
             buf1_vsync <= ov7670_vsync;
             buf2_vsync <= buf1_vsync;
 
@@ -167,6 +158,8 @@ BEGIN
         addrb => addrb,
         doutb => doutb
     );
+    
+    frame_buffer_out_processing <= doutb;
 
     ov7670_capture : ENTITY work.ov7670_capture(rtl) PORT MAP(
         clk => clk,
@@ -198,7 +191,7 @@ BEGIN
             clk => clk,
             rst => rst,
             pxl_clk => pxl_clk,
-            start => frame_buffer_to_vga,
+            start => '1',
             VGA_HS_O => VGA_HS_O,
             VGA_VS_O => VGA_VS_O,
             VGA_R => VGA_R,
@@ -207,7 +200,7 @@ BEGIN
 
             --frame_buffer signals 
             addrb => addrb,
-            doutb => frame_buffer_out_vga
+            doutb => doutb
         );
 
 
