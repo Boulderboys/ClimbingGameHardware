@@ -1,9 +1,9 @@
 #*****************************************************************************************
-# Vivado (TM) v2024.1 (64-bit)
+# Vivado (TM) v2024.1.2 (64-bit)
 #
 # ClimbingGameHardware.tcl: Tcl script for re-creating project 'ClimbingGameHardware'
 #
-# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# IP Build 5164407 on Fri Sep  6 08:18:11 MDT 2024
 #
 # This file contains the Vivado Tcl commands for re-creating the project to the state*
 # when this script was generated. In order to re-create the project, please source this
@@ -230,6 +230,7 @@ set obj [get_filesets sim_1]
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "top" -value "Board" -objects $obj
+set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Set 'utils_1' fileset object
@@ -567,14 +568,14 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set_property -dict [list \
     CONFIG.Algorithm {Minimum_Area} \
     CONFIG.Enable_A {Always_Enabled} \
-    CONFIG.Enable_B {Always_Enabled} \
+    CONFIG.Enable_B {Use_ENB_Pin} \
     CONFIG.Fill_Remaining_Memory_Locations {true} \
     CONFIG.Memory_Type {True_Dual_Port_RAM} \
     CONFIG.Operating_Mode_A {WRITE_FIRST} \
     CONFIG.Operating_Mode_B {READ_FIRST} \
-    CONFIG.Remaining_Memory_Locations {FF} \
+    CONFIG.Remaining_Memory_Locations {1FF} \
     CONFIG.Write_Depth_A {307200} \
-    CONFIG.Write_Width_A {8} \
+    CONFIG.Write_Width_A {9} \
     CONFIG.use_bram_block {Stand_Alone} \
   ] $blk_mem_gen_0
 
@@ -648,8 +649,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
-  validate_bd_design
   save_bd_design
+common::send_gid_msg -ssname BD::TCL -id 2050 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
+
   close_bd_design $design_name 
 }
 # End of cr_bd_bd_microblaze()
@@ -688,7 +690,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -911,7 +912,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
