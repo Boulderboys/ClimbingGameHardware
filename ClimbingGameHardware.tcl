@@ -572,9 +572,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.Memory_Type {True_Dual_Port_RAM} \
     CONFIG.Operating_Mode_A {WRITE_FIRST} \
     CONFIG.Operating_Mode_B {READ_FIRST} \
-    CONFIG.Remaining_Memory_Locations {1FF} \
+    CONFIG.Remaining_Memory_Locations {FF} \
     CONFIG.Write_Depth_A {307200} \
-    CONFIG.Write_Width_A {9} \
+    CONFIG.Write_Width_A {8} \
     CONFIG.use_bram_block {Stand_Alone} \
   ] $blk_mem_gen_0
 
