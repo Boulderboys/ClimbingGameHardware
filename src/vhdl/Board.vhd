@@ -120,8 +120,6 @@ architecture Structural of Board is
         btn : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         ov7670_pwdn : OUT STD_LOGIC;
         ov7670_reset : OUT STD_LOGIC;
-        --sseg_o : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
-        --sseg_cs_o : OUT STD_LOGIC;
         VGA_HS_O : OUT STD_LOGIC;
         VGA_VS_O : OUT STD_LOGIC;
         VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
