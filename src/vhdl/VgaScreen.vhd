@@ -13,7 +13,6 @@ entity VgaScreen is
 --        reset : in std_logic;
         bram_addr   : out std_logic_vector(18 downto 0) := (others => '0');
         bram_data   : in  std_logic_vector(8 downto 0)
-        --bram_data_S : in std_logic_vector(31 downto 0) := "11100011111000111110001111100011" --spoof
     );
 end VgaScreen;
 
@@ -45,7 +44,6 @@ begin
         if false  then
             h_cnt <= (others => '0');
             v_cnt <= (others => '0');
-           -- bram_addr_s <= (others => '0');
         elsif rising_edge(clk) then
             if h_cnt = H_TOTAL - 1 then
                 h_cnt <= (others => '0');
@@ -85,29 +83,3 @@ end process;
     
 
 end Behavioral;
-
-
-
-    -- VGA-kleuren (testbeeld)
---    process(h_cnt, v_cnt)
---    begin
---        if h_cnt < H_ACTIVE and v_cnt < V_ACTIVE then
---            if (v_cnt < 342) then
---                vga_r <= "1111";  -- Rood raster
---                vga_g <= "0000";
---                vga_b <= "0000";
---            elsif (v_cnt <683 ) then
---                vga_r <= "1111";  -- Groen scherm
---                vga_g <= "1111";
---                vga_b <= "1111";
---            else 
---                vga_r <= "0000";  -- Groen scherm
---                vga_g <= "0000";
---                vga_b <= "1111";
---            end if;
---        else
---            vga_r <= "0000";
---            vga_g <= "0000";
---            vga_b <= "0000";
---        end if;
---    end process;
