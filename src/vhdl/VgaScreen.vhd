@@ -12,7 +12,7 @@ entity VgaScreen is
         clk : in std_logic;
 --        reset : in std_logic;
         bram_addr   : out std_logic_vector(18 downto 0) := (others => '0');
-        bram_data   : in  std_logic_vector(7 downto 0)
+        bram_data   : in  std_logic_vector(8 downto 0)
     );
 end VgaScreen;
 
@@ -69,9 +69,9 @@ begin
     if rising_edge(clk) then
         
         if h_cnt < H_ACTIVE and v_cnt < V_ACTIVE then          
-            vga_r(3 downto 0) <= bram_data(7 downto 5 ) & '0';
-            vga_g(3 downto 0) <= bram_data(4 downto 2 ) & '0';
-            vga_b(3 downto 0) <= bram_data(1 downto 0 ) & "00";
+            vga_r(3 downto 0) <= bram_data(8 downto 6 ) & '0';
+            vga_g(3 downto 0) <= bram_data(5 downto 3 ) & '0';
+            vga_b(3 downto 0) <= bram_data(2 downto 0 ) & '0';
         else
             vga_r <= (others => '0');
             vga_g <= (others => '0');
