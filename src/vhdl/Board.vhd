@@ -49,43 +49,25 @@ entity Board is
 end Board;
 
 architecture Structural of Board is
-    component clk_wiz_0 is
+
+    component bd_Microblaze_Wrapper is
         Port (
-            clk_in1 : in std_logic;
-            reset   : in std_logic;
-            locked  : out std_logic;
-            clk_out1 : out std_logic;
-            clk_out2 : out std_logic
+    VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
+    VGA_G_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
+    VGA_HS_o : out STD_LOGIC;
+    VGA_R_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
+    VGA_VS_o : out STD_LOGIC;
+    dip_switches_16bits_tri_i : in STD_LOGIC_VECTOR ( 15 downto 0 );
+    led_16bits_tri_o : out STD_LOGIC_VECTOR ( 15 downto 0 );
+    reset : in STD_LOGIC;
+    sys_clock : in STD_LOGIC;
+    usb_uart_rxd : in STD_LOGIC;
+    usb_uart_txd : out STD_LOGIC
         );
-    end component;
-    component VgaTest is
-        Port (
-            vga_r : out std_logic_vector(3 downto 0);
-            vga_g : out std_logic_vector(3 downto 0);
-            vga_b : out std_logic_vector(3 downto 0);
-            vga_hs : out std_logic;
-            vga_vs : out std_logic;
-            clk : in std_logic;
-            reset : in std_logic
-        );
-    end component VgaTest;
-    component MicroblazeNexysWrapper is
-        Port (
-            SW : in std_logic_vector(15 downto 0);
-            LED : out std_logic_vector(15 downto 0);
-            CPU_RESETN : in std_logic;
-            CLK100MHZ : in std_logic;
-            UART_RXD_OUT : in std_logic;
-            UART_TXD_IN : out std_logic
-        );
-    end component MicroblazeNexysWrapper;
-    
-    signal clk_108mhz : std_logic;
-    signal clk_90mhz : std_logic;
-    signal locked : std_logic;
+    end component bd_Microblaze_Wrapper;
 begin
-    clk_wiz : clk_wiz_0 port map(CLK100MHZ, '0', locked, clk_108mhz, clk_90mhz);
-    Microblaze : MicroblazeNexysWrapper port map(SW, LED, CPU_RESETN, clk_90mhz, UART_RXD_OUT, UART_TXD_IN);
-    vgascreen: vgaTest port map (vga_r => VGA_R, vga_g => VGA_G, vga_b => VGA_B, vga_hs => VGA_HS, 
-    vga_vs => VGA_VS, clk => clk_108mhz, reset => '0');
+   Microblaze : bd_Microblaze_Wrapper port map(VGA_B_o => VGA_B, VGA_G_o => VGA_G, VGA_R_o => VGA_R,
+   VGA_HS_o => VGA_HS, VGA_VS_o => VGA_VS,dip_switches_16bits_tri_i => SW(15 downto 0) 
+   ,led_16bits_tri_o => LED(15 downto 0), reset => CPU_RESETN, sys_clock => clk100mhz, usb_uart_rxd => UART_RXD_OUT
+   , usb_uart_txd => UART_TXD_IN);
 end Structural;
