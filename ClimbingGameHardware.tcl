@@ -22,7 +22,6 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/VGASelector.vhd"]"\
- "[file normalize "$origin_dir/src/vhdl/VgaTest.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/debounce/debounce.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/i2c/i2c_master.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/ov7670_capture.vhd"]"\
@@ -37,6 +36,8 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
+ "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
  "[file normalize "$origin_dir/src/constraints/Nexys_A7_100T-Master.xdc"]"\
   ]
   foreach ifile $files {
@@ -166,13 +167,14 @@ set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 set_property -name "target_simulator" -value "Riviera" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "23" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "23" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "23" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "23" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "23" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "23" -objects $obj
-set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.xcelium_export_sim" -value "2" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "45" -objects $obj
+set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -186,13 +188,14 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/common/common_pkg.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/VGASelector.vhd"] \
- [file normalize "${origin_dir}/src/vhdl/VgaTest.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/debounce/debounce.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/i2c/i2c_master.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/ov7670_capture.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/ov7670_configuration.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/top.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/VgaScreen.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/AXI_BRAM_Controller.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/Board.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram_axi_lite/blk_mem_axi_lite.xci"] \
@@ -201,7 +204,7 @@ set files [list \
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/src/vhdl/MicroblazeNexysWrapper.vhd"
+set file "$origin_dir/src/vhdl/VgaScreen.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -221,7 +224,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "$origin_dir/src/vhdl/VgaTest.vhd"
+set file "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -424,10 +427,21 @@ set obj [get_filesets utils_1]
 
 
 # Adding sources referenced in BDs, if not already added
+if { [get_files VgaScreen.vhd] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/VgaScreen.vhd"
+}
+if { [get_files AXI_BRAM_Controller.vhd] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
+}
 
 
 # Proc to create BD bd_microblaze
 proc cr_bd_bd_microblaze { parentCell } {
+# The design that will be created by this Tcl proc contains the following 
+# module references:
+# VgaScreen, AXI_BRAM_Controller
+
+
 
   # CHANGE DESIGN NAME HERE
   set design_name bd_microblaze
@@ -450,9 +464,10 @@ proc cr_bd_bd_microblaze { parentCell } {
   xilinx.com:ip:axi_uartlite:2.0\
   xilinx.com:ip:util_vector_logic:2.0\
   xilinx.com:ip:axi_gpio:2.0\
+  xilinx.com:ip:blk_mem_gen:8.4\
+  xilinx.com:ip:smartconnect:1.0\
   xilinx.com:ip:lmb_v10:3.0\
   xilinx.com:ip:lmb_bram_if_cntlr:4.0\
-  xilinx.com:ip:blk_mem_gen:8.4\
   "
 
    set list_ips_missing ""
@@ -471,6 +486,32 @@ proc cr_bd_bd_microblaze { parentCell } {
    }
 
   }
+
+  ##################################################################
+  # CHECK Modules
+  ##################################################################
+  set bCheckModules 1
+  if { $bCheckModules == 1 } {
+     set list_check_mods "\ 
+  VgaScreen\
+  AXI_BRAM_Controller\
+  "
+
+   set list_mods_missing ""
+   common::send_gid_msg -ssname BD::TCL -id 2020 -severity "INFO" "Checking if the following modules exist in the project's sources: $list_check_mods ."
+
+   foreach mod_vlnv $list_check_mods {
+      if { [can_resolve_reference $mod_vlnv] == 0 } {
+         lappend list_mods_missing $mod_vlnv
+      }
+   }
+
+   if { $list_mods_missing ne "" } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2021 -severity "ERROR" "The following module(s) are not found in the project: $list_mods_missing" }
+      common::send_gid_msg -ssname BD::TCL -id 2022 -severity "INFO" "Please add source files for the missing module(s) above."
+      set bCheckIPsPassed 0
+   }
+}
 
   if { $bCheckIPsPassed != 1 } {
     common::send_gid_msg -ssname BD::TCL -id 2023 -severity "WARNING" "Will not continue with creation of design due to the error(s) above."
@@ -605,6 +646,11 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set_property -dict [ list \
    CONFIG.POLARITY {ACTIVE_LOW} \
  ] $reset
+  set VGA_B_o [ create_bd_port -dir O -from 3 -to 0 VGA_B_o ]
+  set VGA_G_o [ create_bd_port -dir O -from 3 -to 0 VGA_G_o ]
+  set VGA_HS_o [ create_bd_port -dir O VGA_HS_o ]
+  set VGA_R_o [ create_bd_port -dir O -from 3 -to 0 VGA_R_o ]
+  set VGA_VS_o [ create_bd_port -dir O VGA_VS_o ]
 
   # Create instance: microblaze_riscv_0, and set properties
   set microblaze_riscv_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze_riscv:1.0 microblaze_riscv_0 ]
@@ -625,7 +671,31 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Create instance: clk_wiz_1, and set properties
   set clk_wiz_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_1 ]
   set_property -dict [list \
+    CONFIG.CLKOUT1_DRIVES {BUFG} \
+    CONFIG.CLKOUT1_JITTER {137.681} \
+    CONFIG.CLKOUT1_PHASE_ERROR {105.461} \
+    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {100} \
+    CONFIG.CLKOUT2_DRIVES {BUFG} \
+    CONFIG.CLKOUT2_JITTER {183.467} \
+    CONFIG.CLKOUT2_PHASE_ERROR {105.461} \
+    CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {25} \
+    CONFIG.CLKOUT2_USED {true} \
+    CONFIG.CLKOUT3_DRIVES {BUFG} \
+    CONFIG.CLKOUT4_DRIVES {BUFG} \
+    CONFIG.CLKOUT5_DRIVES {BUFG} \
+    CONFIG.CLKOUT6_DRIVES {BUFG} \
+    CONFIG.CLKOUT7_DRIVES {BUFG} \
     CONFIG.CLK_IN1_BOARD_INTERFACE {sys_clock} \
+    CONFIG.CLK_IN2_BOARD_INTERFACE {Custom} \
+    CONFIG.JITTER_SEL {No_Jitter} \
+    CONFIG.MMCM_BANDWIDTH {OPTIMIZED} \
+    CONFIG.MMCM_CLKFBOUT_MULT_F {9} \
+    CONFIG.MMCM_CLKOUT0_DIVIDE_F {9} \
+    CONFIG.MMCM_CLKOUT1_DIVIDE {36} \
+    CONFIG.MMCM_COMPENSATION {ZHOLD} \
+    CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+    CONFIG.NUM_OUT_CLKS {2} \
+    CONFIG.PRIMITIVE {PLL} \
     CONFIG.PRIM_SOURCE {Single_ended_clock_capable_pin} \
     CONFIG.RESET_BOARD_INTERFACE {reset} \
     CONFIG.USE_BOARD_FLOW {true} \
@@ -641,11 +711,6 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.UARTLITE_BOARD_INTERFACE {usb_uart} \
     CONFIG.USE_BOARD_FLOW {true} \
   ] $axi_uartlite_0
-
-
-  # Create instance: microblaze_riscv_0_axi_periph, and set properties
-  set microblaze_riscv_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 microblaze_riscv_0_axi_periph ]
-  set_property CONFIG.NUM_MI {3} $microblaze_riscv_0_axi_periph
 
 
   # Create instance: reset_inv_0, and set properties
@@ -672,30 +737,93 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   ] $axi_gpio_1
 
 
+  # Create instance: VgaScreen_0, and set properties
+  set block_name VgaScreen
+  set block_cell_name VgaScreen_0
+  if { [catch {set VgaScreen_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $VgaScreen_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  # Create instance: blk_mem_gen_0, and set properties
+  set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0 ]
+  set_property -dict [list \
+    CONFIG.Algorithm {Minimum_Area} \
+    CONFIG.Enable_A {Always_Enabled} \
+    CONFIG.Enable_B {Use_ENB_Pin} \
+    CONFIG.Fill_Remaining_Memory_Locations {true} \
+    CONFIG.Memory_Type {True_Dual_Port_RAM} \
+    CONFIG.Operating_Mode_A {WRITE_FIRST} \
+    CONFIG.Operating_Mode_B {READ_FIRST} \
+    CONFIG.Remaining_Memory_Locations {1FF} \
+    CONFIG.Write_Depth_A {307200} \
+    CONFIG.Write_Width_A {9} \
+    CONFIG.use_bram_block {Stand_Alone} \
+  ] $blk_mem_gen_0
+
+
+  # Create instance: smartconnect_0, and set properties
+  set smartconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_0 ]
+  set_property -dict [list \
+    CONFIG.NUM_MI {4} \
+    CONFIG.NUM_SI {1} \
+  ] $smartconnect_0
+
+
+  # Create instance: AXI_BRAM_Controller_0, and set properties
+  set block_name AXI_BRAM_Controller
+  set block_cell_name AXI_BRAM_Controller_0
+  if { [catch {set AXI_BRAM_Controller_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $AXI_BRAM_Controller_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+    set_property CONFIG.C_S_AXI_DATA_WIDTH {32} $AXI_BRAM_Controller_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_16bits] [get_bd_intf_pins axi_gpio_0/GPIO]
   connect_bd_intf_net -intf_net axi_gpio_1_GPIO [get_bd_intf_ports dip_switches_16bits] [get_bd_intf_pins axi_gpio_1/GPIO]
   connect_bd_intf_net -intf_net axi_uartlite_0_UART [get_bd_intf_ports usb_uart] [get_bd_intf_pins axi_uartlite_0/UART]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_M_AXI_DP [get_bd_intf_pins microblaze_riscv_0/M_AXI_DP] [get_bd_intf_pins microblaze_riscv_0_axi_periph/S00_AXI]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M00_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M00_AXI] [get_bd_intf_pins axi_uartlite_0/S_AXI]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M01_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M01_AXI] [get_bd_intf_pins axi_gpio_0/S_AXI]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M02_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M02_AXI] [get_bd_intf_pins axi_gpio_1/S_AXI]
+  connect_bd_intf_net -intf_net microblaze_riscv_0_M_AXI_DP [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins microblaze_riscv_0/M_AXI_DP]
   connect_bd_intf_net -intf_net microblaze_riscv_0_debug [get_bd_intf_pins mdm_1/MBDEBUG_0] [get_bd_intf_pins microblaze_riscv_0/DEBUG]
   connect_bd_intf_net -intf_net microblaze_riscv_0_dlmb_1 [get_bd_intf_pins microblaze_riscv_0/DLMB] [get_bd_intf_pins microblaze_riscv_0_local_memory/DLMB]
   connect_bd_intf_net -intf_net microblaze_riscv_0_ilmb_1 [get_bd_intf_pins microblaze_riscv_0/ILMB] [get_bd_intf_pins microblaze_riscv_0_local_memory/ILMB]
+  connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins smartconnect_0/M00_AXI] [get_bd_intf_pins AXI_BRAM_Controller_0/s_axi]
+  connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_pins smartconnect_0/M01_AXI] [get_bd_intf_pins axi_gpio_0/S_AXI]
+  connect_bd_intf_net -intf_net smartconnect_0_M02_AXI [get_bd_intf_pins smartconnect_0/M02_AXI] [get_bd_intf_pins axi_gpio_1/S_AXI]
+  connect_bd_intf_net -intf_net smartconnect_0_M03_AXI [get_bd_intf_pins smartconnect_0/M03_AXI] [get_bd_intf_pins axi_uartlite_0/S_AXI]
 
   # Create port connections
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_addr [get_bd_pins AXI_BRAM_Controller_0/bram_addr] [get_bd_pins blk_mem_gen_0/addra]
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_clk [get_bd_pins AXI_BRAM_Controller_0/bram_clk] [get_bd_pins blk_mem_gen_0/clka]
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_din [get_bd_pins AXI_BRAM_Controller_0/bram_din] [get_bd_pins blk_mem_gen_0/dina]
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_we [get_bd_pins AXI_BRAM_Controller_0/bram_we] [get_bd_pins blk_mem_gen_0/wea]
+  connect_bd_net -net VgaScreen_0_bram_addr [get_bd_pins VgaScreen_0/bram_addr] [get_bd_pins blk_mem_gen_0/addrb]
+  connect_bd_net -net VgaScreen_0_vga_b [get_bd_pins VgaScreen_0/vga_b] [get_bd_ports VGA_B_o]
+  connect_bd_net -net VgaScreen_0_vga_g [get_bd_pins VgaScreen_0/vga_g] [get_bd_ports VGA_G_o]
+  connect_bd_net -net VgaScreen_0_vga_hs [get_bd_pins VgaScreen_0/vga_hs] [get_bd_ports VGA_HS_o]
+  connect_bd_net -net VgaScreen_0_vga_r [get_bd_pins VgaScreen_0/vga_r] [get_bd_ports VGA_R_o]
+  connect_bd_net -net VgaScreen_0_vga_vs [get_bd_pins VgaScreen_0/vga_vs] [get_bd_ports VGA_VS_o]
+  connect_bd_net -net blk_mem_gen_0_doutb [get_bd_pins blk_mem_gen_0/doutb] [get_bd_pins VgaScreen_0/bram_data]
+  connect_bd_net -net clk_wiz_1_clk_out1 [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins smartconnect_0/aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins rst_clk_wiz_1_100M/slowest_sync_clk] [get_bd_pins blk_mem_gen_0/clkb] [get_bd_pins AXI_BRAM_Controller_0/s_axi_aclk]
+  connect_bd_net -net clk_wiz_1_clk_out2 [get_bd_pins clk_wiz_1/clk_out2] [get_bd_pins VgaScreen_0/clk]
   connect_bd_net -net clk_wiz_1_locked [get_bd_pins clk_wiz_1/locked] [get_bd_pins rst_clk_wiz_1_100M/dcm_locked]
   connect_bd_net -net mdm_1_debug_sys_rst [get_bd_pins mdm_1/Debug_SYS_Rst] [get_bd_pins rst_clk_wiz_1_100M/mb_debug_sys_rst]
-  connect_bd_net -net microblaze_riscv_0_Clk [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins rst_clk_wiz_1_100M/slowest_sync_clk] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ACLK] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/ACLK] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ACLK] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ACLK]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins reset_inv_0/Op1] [get_bd_pins rst_clk_wiz_1_100M/ext_reset_in]
   connect_bd_net -net reset_inv_0_Res [get_bd_pins reset_inv_0/Res] [get_bd_pins clk_wiz_1/reset]
   connect_bd_net -net rst_clk_wiz_1_100M_bus_struct_reset [get_bd_pins rst_clk_wiz_1_100M/bus_struct_reset] [get_bd_pins microblaze_riscv_0_local_memory/SYS_Rst]
   connect_bd_net -net rst_clk_wiz_1_100M_mb_reset [get_bd_pins rst_clk_wiz_1_100M/mb_reset] [get_bd_pins microblaze_riscv_0/Reset]
-  connect_bd_net -net rst_clk_wiz_1_100M_peripheral_aresetn [get_bd_pins rst_clk_wiz_1_100M/peripheral_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ARESETN] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/ARESETN] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ARESETN] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ARESETN]
+  connect_bd_net -net rst_clk_wiz_1_100M_peripheral_aresetn [get_bd_pins rst_clk_wiz_1_100M/peripheral_aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins smartconnect_0/aresetn] [get_bd_pins AXI_BRAM_Controller_0/s_axi_aresetn]
   connect_bd_net -net sys_clock_1 [get_bd_ports sys_clock] [get_bd_pins clk_wiz_1/clk_in1]
 
   # Create address segments
+  assign_bd_address -offset 0x00080000 -range 0x00040000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force
@@ -706,8 +834,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
-  validate_bd_design
   save_bd_design
+common::send_gid_msg -ssname BD::TCL -id 2050 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
+
   close_bd_design $design_name 
 }
 # End of cr_bd_bd_microblaze()

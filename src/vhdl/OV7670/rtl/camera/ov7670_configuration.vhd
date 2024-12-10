@@ -3,7 +3,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 USE work.common_pkg.ALL;
 
-ENTITY ov7670_configuration IS
+entity ov7670_configuration IS
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
@@ -19,7 +19,11 @@ ENTITY ov7670_configuration IS
     );
 END ov7670_configuration;
 
+
+
 ARCHITECTURE Behavioral OF ov7670_configuration IS
+
+
     SIGNAL i2c_ena : STD_LOGIC := '0'; -- latch in command
     SIGNAL i2c_addr : STD_LOGIC_VECTOR(6 DOWNTO 0) := (OTHERS => '0'); -- address of target slave
     SIGNAL i2c_rw : STD_LOGIC := '0';
@@ -29,7 +33,7 @@ ARCHITECTURE Behavioral OF ov7670_configuration IS
 
 BEGIN
 
-    ov7670_fsm : ENTITY work.ov7670_fsm(rtl)
+    ov7670_statemachine : entity work.ov7670_fsm
         PORT MAP(
             clk => clk,
             rst => rst,
@@ -46,7 +50,7 @@ BEGIN
             done => done
         );
 
-    i2c_master : ENTITY work.i2c_master(logic) --i2c_master entity
+    i2c_m : entity work.i2c_master --i2c_master entity
         GENERIC MAP(
             input_clk => C_ARTY_A7_CLK_FREQ
         )

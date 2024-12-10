@@ -2,7 +2,7 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.1.2 (win64) Build 5164865 Thu Sep  5 14:37:11 MDT 2024
--- Date        : Thu Dec  5 14:27:12 2024
+-- Date        : Tue Dec 10 10:31:01 2024
 -- Host        : JACCO-GIGABYTE running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
 --               c:/Users/jacco/User_Documents/KBSVivado/Boulderboys/hardware/ips/clk_wiz_0/clk_wiz_0_stub.vhdl
