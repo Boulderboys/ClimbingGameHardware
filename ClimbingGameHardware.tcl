@@ -18,6 +18,16 @@
 proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
+ "[file normalize "$origin_dir/vivado_project/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp"]"\
+  ]
+  foreach ifile $files {
+    if { ![file isfile $ifile] } {
+      puts " Could not find local file $ifile "
+      set status false
+    }
+  }
+
+  set files [list \
  "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/VGASelector.vhd"]"\
@@ -167,12 +177,13 @@ set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 set_property -name "target_simulator" -value "Questa" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "45" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "45" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "45" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "45" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "45" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "45" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "48" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "48" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "48" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "48" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "48" -objects $obj
+set_property -name "webtalk.xcelium_export_sim" -value "3" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "48" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -381,7 +392,20 @@ set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Set 'utils_1' fileset object
 set obj [get_filesets utils_1]
-# Empty (no sources present)
+# Add local files from the original project (-no_copy_sources specified)
+set files [list \
+ [file normalize "${origin_dir}/vivado_project/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp" ]\
+]
+set added_files [add_files -fileset utils_1 $files]
+
+# Set 'utils_1' fileset file properties for remote files
+# None
+
+# Set 'utils_1' fileset file properties for local files
+set file "synth_1/Board.dcp"
+set file_obj [get_files -of_objects [get_filesets utils_1] [list "*$file"]]
+set_property -name "netlist_only" -value "0" -objects $file_obj
+
 
 # Set 'utils_1' fileset properties
 set obj [get_filesets utils_1]
@@ -769,7 +793,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.Algorithm {Minimum_Area} \
     CONFIG.Assume_Synchronous_Clk {false} \
     CONFIG.Enable_A {Always_Enabled} \
-    CONFIG.Enable_B {Use_ENB_Pin} \
+    CONFIG.Enable_B {Always_Enabled} \
     CONFIG.Fill_Remaining_Memory_Locations {true} \
     CONFIG.Memory_Type {True_Dual_Port_RAM} \
     CONFIG.Operating_Mode_A {WRITE_FIRST} \
@@ -884,7 +908,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net vga_used_by_camera_0_1 [get_bd_ports vga_used_by_camera_0] [get_bd_pins VGASelector_0/vga_used_by_camera]
 
   # Create address segments
-  assign_bd_address -offset 0x00080000 -range 0x00040000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
+  assign_bd_address -offset 0x00080000 -range 0x00080000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force
@@ -935,7 +959,7 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
+set_property -name "incremental_checkpoint" -value "$proj_dir/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -1158,7 +1182,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
