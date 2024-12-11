@@ -50,19 +50,6 @@ end Board;
 
 architecture Structural of Board is
 
---    component VgaScreen is
---        Port (
---            vga_r : out std_logic_vector(3 downto 0);
---            vga_g : out std_logic_vector(3 downto 0);
---            vga_b : out std_logic_vector(3 downto 0);
---            vga_hs : out std_logic;
---            vga_vs : out std_logic;
---            clk : in std_logic;
---            reset : in std_logic;
---        bram_addr   : out std_logic_vector(18 downto 0);
---        bram_data   : in  std_logic_vector(8 downto 0) 
---        );
---    end component VgaScreen;
     component bd_Microblaze_Wrapper is
         Port (
     VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -83,6 +70,4 @@ begin
    VGA_HS_o => VGA_HS, VGA_VS_o => VGA_VS,dip_switches_16bits_tri_i => SW(15 downto 0) 
    ,led_16bits_tri_o => LED(15 downto 0), reset => CPU_RESETN, sys_clock => clk100mhz, usb_uart_rxd => UART_RXD_OUT
    , usb_uart_txd => UART_TXD_IN);
---    vga: VgaScreen port map (vga_r => VGA_R, vga_g => VGA_G, vga_b => VGA_B, vga_hs => VGA_HS, 
---    vga_vs => VGA_VS, clk => clk_25mhz, reset => '0', bram_data => "000000001");
 end Structural;
