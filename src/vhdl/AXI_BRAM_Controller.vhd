@@ -8,7 +8,7 @@ entity AXI_BRAM_Controller is
         C_S_AXI_DATA_WIDTH    : integer := 32;
         C_S_AXI_ADDR_WIDTH    : integer := 19;
         C_MEMORY_DEPTH        : integer := 307200;
-        C_S_BRAM_DATA_WIDTH   : integer := 9
+        C_S_BRAM_DATA_WIDTH   : integer := 8
     );
     port (
         -- AXI4-Lite slave signals

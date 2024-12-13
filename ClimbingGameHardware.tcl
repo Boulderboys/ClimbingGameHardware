@@ -493,11 +493,11 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set_property -dict [ list \
    CONFIG.POLARITY {ACTIVE_LOW} \
  ] $reset
-  set VGA_B_o [ create_bd_port -dir O -from 3 -to 0 VGA_B_o ]
   set VGA_G_o [ create_bd_port -dir O -from 3 -to 0 VGA_G_o ]
   set VGA_HS_o [ create_bd_port -dir O VGA_HS_o ]
   set VGA_R_o [ create_bd_port -dir O -from 3 -to 0 VGA_R_o ]
   set VGA_VS_o [ create_bd_port -dir O VGA_VS_o ]
+  set VGA_B_o [ create_bd_port -dir O -from 3 -to 0 VGA_B_o ]
 
   # Create instance: microblaze_riscv_0, and set properties
   set microblaze_riscv_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze_riscv:1.0 microblaze_riscv_0 ]
@@ -528,6 +528,10 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {25} \
     CONFIG.CLKOUT2_USED {true} \
     CONFIG.CLKOUT3_DRIVES {BUFG} \
+    CONFIG.CLKOUT3_JITTER {153.276} \
+    CONFIG.CLKOUT3_PHASE_ERROR {105.461} \
+    CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {60} \
+    CONFIG.CLKOUT3_USED {true} \
     CONFIG.CLKOUT4_DRIVES {BUFG} \
     CONFIG.CLKOUT5_DRIVES {BUFG} \
     CONFIG.CLKOUT6_DRIVES {BUFG} \
@@ -539,9 +543,10 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.MMCM_CLKFBOUT_MULT_F {9} \
     CONFIG.MMCM_CLKOUT0_DIVIDE_F {9} \
     CONFIG.MMCM_CLKOUT1_DIVIDE {36} \
+    CONFIG.MMCM_CLKOUT2_DIVIDE {15} \
     CONFIG.MMCM_COMPENSATION {ZHOLD} \
     CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-    CONFIG.NUM_OUT_CLKS {2} \
+    CONFIG.NUM_OUT_CLKS {3} \
     CONFIG.PRIMITIVE {PLL} \
     CONFIG.PRIM_SOURCE {Single_ended_clock_capable_pin} \
     CONFIG.RESET_BOARD_INTERFACE {reset} \
@@ -605,9 +610,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.Memory_Type {True_Dual_Port_RAM} \
     CONFIG.Operating_Mode_A {WRITE_FIRST} \
     CONFIG.Operating_Mode_B {READ_FIRST} \
-    CONFIG.Remaining_Memory_Locations {1FF} \
+    CONFIG.Remaining_Memory_Locations {FF} \
     CONFIG.Write_Depth_A {307200} \
-    CONFIG.Write_Width_A {9} \
+    CONFIG.Write_Width_A {8} \
     CONFIG.use_bram_block {Stand_Alone} \
   ] $blk_mem_gen_0
 
@@ -702,7 +707,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net sys_clock_1 [get_bd_ports sys_clock] [get_bd_pins clk_wiz_1/clk_in1]
 
   # Create address segments
-  assign_bd_address -offset 0x00080000 -range 0x00040000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
+  assign_bd_address -offset 0x00080000 -range 0x00080000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force

@@ -12,7 +12,7 @@ entity VgaScreen is
         clk : in std_logic;
 --        reset : in std_logic;
         bram_addr   : out std_logic_vector(18 downto 0) := (others => '0');
-        bram_data   : in  std_logic_vector(8 downto 0)
+        bram_data   : in  std_logic_vector(7 downto 0)
     );
 end VgaScreen;
 
@@ -20,6 +20,7 @@ architecture Behavioral of vgaScreen is
 
     signal h_cnt : unsigned(10 downto 0) := (others => '0');
     signal v_cnt : unsigned(10 downto 0) := (others => '0');
+    
     
     constant H_ACTIVE    : integer := 640;
     constant H_FP        : integer := 16;
@@ -37,7 +38,25 @@ architecture Behavioral of vgaScreen is
     constant Picture_size : integer := 307200;
    
     
-begin                 
+begin                
+
+VGAdraw : process(h_cnt, v_cnt, clk)
+begin
+    if rising_edge(clk) then
+        
+        if h_cnt < H_ACTIVE and v_cnt < V_ACTIVE then   
+            vga_r(3 downto 0) <= bram_data(7 downto 5 ) & '0';
+            vga_g(3 downto 0) <= bram_data(4 downto 2 ) & '0';
+            vga_b(3 downto 0) <= bram_data(1 downto 0 ) & "00";
+        else
+            vga_r <= (others => '0');
+            vga_g <= (others => '0');
+            vga_b <= (others => '0');
+        end if;
+        
+     end if;
+end process;
+ 
     -- Horizontale en verticale teller
  counters:   process(clk)
     begin
@@ -64,22 +83,6 @@ begin
     vga_hs <= '0' when (h_cnt >= H_ACTIVE + H_FP and h_cnt < H_ACTIVE + H_FP + H_SYNC) else '1';
     vga_vs <= '0' when (v_cnt >= V_ACTIVE + V_FP and v_cnt < V_ACTIVE + V_FP + V_SYNC) else '1';
     
-VGAdraw : process(h_cnt, v_cnt, clk)
-begin
-    if rising_edge(clk) then
-        
-        if h_cnt < H_ACTIVE and v_cnt < V_ACTIVE then          
-            vga_r(3 downto 0) <= bram_data(8 downto 6 ) & '0';
-            vga_g(3 downto 0) <= bram_data(5 downto 3 ) & '0';
-            vga_b(3 downto 0) <= bram_data(2 downto 0 ) & '0';
-        else
-            vga_r <= (others => '0');
-            vga_g <= (others => '0');
-            vga_b <= (others => '0');
-        end if;
-        
-     end if;
-end process;
     
 
 end Behavioral;
