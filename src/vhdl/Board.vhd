@@ -56,7 +56,7 @@ end Board;
 architecture Structural of Board is
 
 component bd_microblaze_wrapper is
-  port (
+port (
     VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     VGA_G_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     VGA_HS_o : out STD_LOGIC;
@@ -78,7 +78,7 @@ component bd_microblaze_wrapper is
     sys_clock : in STD_LOGIC;
     usb_uart_rxd : in STD_LOGIC;
     usb_uart_txd : out STD_LOGIC;
-    vga_used_by_camera_0 : in STD_LOGIC
+    used_by_processor_0 : in STD_LOGIC
   );
   end component bd_microblaze_wrapper;
     
@@ -92,6 +92,6 @@ begin
         reset => CPU_RESETN, 
         sys_clock => CLK100MHZ, usb_uart_rxd => UART_RXD_OUT, 
         usb_uart_txd => UART_TXD_IN,
-        vga_used_by_camera_0 => SW(0)
+        used_by_processor_0 => SW(0)
     );
 end Structural;

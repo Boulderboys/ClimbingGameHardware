@@ -2,10 +2,10 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.1.2 (win64) Build 5164865 Thu Sep  5 14:37:11 MDT 2024
--- Date        : Tue Nov 26 15:04:55 2024
+-- Date        : Tue Dec 17 12:08:49 2024
 -- Host        : JACCO-GIGABYTE running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               c:/Users/jacco/User_Documents/KBSVivado/Boulderboys/hardware/src/vhdl/OV7670/ip/clk_gen/clk_generator_1/clk_generator_sim_netlist.vhdl
+--               c:/Boulderboys/hardware/src/vhdl/OV7670/ip/clk_gen/clk_generator_1/clk_generator_sim_netlist.vhdl
 -- Design      : clk_generator
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.

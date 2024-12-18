@@ -2,10 +2,10 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.1.2 (win64) Build 5164865 Thu Sep  5 14:37:11 MDT 2024
--- Date        : Thu Dec  5 11:34:33 2024
+-- Date        : Tue Dec 17 12:08:44 2024
 -- Host        : JACCO-GIGABYTE running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub -rename_top vga_clk_gen -prefix
---               vga_clk_gen_ vga_clk_gen_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub
+--               c:/Boulderboys/hardware/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen/vga_clk_gen_stub.vhdl
 -- Design      : vga_clk_gen
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-1

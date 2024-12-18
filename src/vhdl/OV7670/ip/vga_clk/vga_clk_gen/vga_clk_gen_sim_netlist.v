@@ -2,10 +2,10 @@
 // Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2024.1.2 (win64) Build 5164865 Thu Sep  5 14:37:11 MDT 2024
-// Date        : Thu Dec  5 11:34:33 2024
+// Date        : Tue Dec 17 12:08:44 2024
 // Host        : JACCO-GIGABYTE running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim -rename_top vga_clk_gen -prefix
-//               vga_clk_gen_ vga_clk_gen_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim
+//               c:/Boulderboys/hardware/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen/vga_clk_gen_sim_netlist.v
 // Design      : vga_clk_gen
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -29,14 +29,14 @@ module vga_clk_gen
   wire locked;
   wire reset;
 
-  vga_clk_gen_vga_clk_gen_clk_wiz inst
+  vga_clk_gen_clk_wiz inst
        (.clk_in1(clk_in1),
         .clk_out1(clk_out1),
         .locked(locked),
         .reset(reset));
 endmodule
 
-module vga_clk_gen_vga_clk_gen_clk_wiz
+module vga_clk_gen_clk_wiz
    (clk_out1,
     reset,
     locked,

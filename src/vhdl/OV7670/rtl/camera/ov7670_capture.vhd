@@ -15,16 +15,30 @@ ENTITY ov7670_capture IS
         ov7670_data : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
         start : IN STD_LOGIC;
         frame_finished_o : OUT STD_LOGIC;
-        pixel_data : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        pixel_data : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
 
         --frame_buffer signals
         wea : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-        dina : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
+        dina : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
         addra : OUT STD_LOGIC_VECTOR(18 DOWNTO 0)
     );
 END ov7670_capture;
 
 ARCHITECTURE rtl OF ov7670_capture IS
+
+    component ila_0 is
+        port(
+            clk : in std_logic;
+            probe0 : in std_logic_vector(7 downto 0);
+            probe1 : in std_logic_vector(7 downto 0);
+            probe2 : in std_logic_vector(7 downto 0);
+            probe3 : in std_logic_vector(7 downto 0);
+            probe4 : in std_logic_vector(7 downto 0);
+            probe5 : in std_logic_vector(7 downto 0);
+            probe6 : in std_logic_vector(7 downto 0);
+            probe7 : in std_logic_vector(7 downto 0)
+        );
+    end component;
 
     TYPE state_type IS (
         idle, start_capturing, wait_for_new_frame, frame_finished, capture_line, capture_rgb_byte, write_to_bram
@@ -44,7 +58,7 @@ ARCHITECTURE rtl OF ov7670_capture IS
     TYPE reg_type IS RECORD
         state : state_type;
         href_cnt : INTEGER RANGE 0 TO 500;
-        rgb_reg : STD_LOGIC_VECTOR(15 DOWNTO 0);
+        rgb_reg : STD_LOGIC_VECTOR(7 DOWNTO 0);
         pixel_reg : INTEGER RANGE 0 TO 650;
         bram_address : unsigned(18 DOWNTO 0);
     END RECORD reg_type;
@@ -126,14 +140,14 @@ BEGIN
             WHEN capture_line =>
                 IF pclk_edge = '1' THEN
 
-                    reg_next.rgb_reg(15 DOWNTO 8) <= ov7670_data; --capture first byte of pixel data
+                    reg_next.rgb_reg(7 DOWNTO 5) <= ov7670_data(7 downto 5); --capture first byte of pixel data
+                    reg_next.rgb_reg(4 DOWNTO 2) <= ov7670_data(3 downto 1); --capture first byte of pixel data
                     reg_next.state <= capture_rgb_byte;
                 END IF;
 
             WHEN capture_rgb_byte =>
                 IF pclk_edge = '1' THEN
-
-                    reg_next.rgb_reg(7 DOWNTO 0) <= ov7670_data; --capture first byte of pixel data
+                    reg_next.rgb_reg(1 DOWNTO 0) <= ov7670_data(1 downto 0); --capture first byte of pixel data
 
                     reg_next.pixel_reg <= reg.pixel_reg + 1; --keep track of current pixel position in line
 
@@ -153,7 +167,7 @@ BEGIN
 
             WHEN write_to_bram =>
                 wea <= "1"; --write enable bram
-                dina <= reg.rgb_reg(11 DOWNTO 0); --write 12 bit pixel value to bram
+                dina <= reg.rgb_reg(7 DOWNTO 0); --write 12 bit pixel value to bram
                 reg_next.bram_address <= reg.bram_address + 1; --increment address register for next pixel
                 reg_next.state <= capture_line; --capture next pixel
 
@@ -168,7 +182,17 @@ BEGIN
     END PROCESS;
     
 
-
+    ila : ila_0 port map(
+        clk => clk,
+        probe0 => reg_next.rgb_reg(7 downto 0),
+        probe1 => (others => '0'),
+        probe2 => (others => '0'), 
+        probe3 => (others => '0'), 
+        probe4 => (others => '0'), 
+        probe5 => (others => '0'), 
+        probe6 => (others => '0'), 
+        probe7 => (others => '0') 
+    );
     pixel_data <= reg.rgb_reg;
 
 END ARCHITECTURE;
