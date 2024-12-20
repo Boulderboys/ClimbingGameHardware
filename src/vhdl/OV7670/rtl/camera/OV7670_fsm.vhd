@@ -77,7 +77,7 @@ ARCHITECTURE rtl OF ov7670_fsm IS
     SIGNAL reg, reg_next : reg_type := INIT_REG_FILE;
     SIGNAL i2c_reg, i2c_next : i2c_reg_type := INIT_I2C_REGS;
 BEGIN
-
+    
     PROCESS (clk, rst)
     BEGIN
         IF rising_edge(clk) THEN
@@ -112,12 +112,11 @@ BEGIN
             WHEN idle =>
                 IF start = '1' THEN
                     reg_next.rom_index <= 0;
-                    reg_next.config_finished <= '0';
+                    --reg_next.config_finished <= '0';
                     reg_next.state <= reset_device;
                 END IF;
 
             WHEN reset_device =>
-
                 reg_next.counter <= reg.counter + 1;
                 IF reg.counter < CLK_CNT_600MS / 2 THEN
                     ov7670_reset_sig <= '0'; --active low reset
@@ -240,7 +239,7 @@ BEGIN
 
     i2c_ena <= reg.i2c_ena;
     done <= reg.done;
-
+    
     config_finished <= reg.config_finished;
     
     ov7670_reset <= ov7670_reset_sig;

@@ -120,10 +120,10 @@ BEGIN
         CASE reg.state IS
 
             WHEN idle =>
-                IF start = '1' AND config_finished = '1' THEN
+                --IF config_finished = '1' THEN --start = '1' AND
                     reg_next.bram_address <= (OTHERS => '0');
                     reg_next.state <= wait_for_new_frame;
-                END IF;
+                --END IF;
 
             WHEN wait_for_new_frame =>
                 IF vsync_falling_edge = '1' THEN --new frame is about to start
@@ -140,14 +140,16 @@ BEGIN
             WHEN capture_line =>
                 IF pclk_edge = '1' THEN
 
-                    reg_next.rgb_reg(7 DOWNTO 5) <= ov7670_data(7 downto 5); --capture first byte of pixel data
-                    reg_next.rgb_reg(4 DOWNTO 2) <= ov7670_data(3 downto 1); --capture first byte of pixel data
+                   -- reg_next.rgb_reg(7 DOWNTO 5) <= ov7670_data(7 downto 5); --capture first byte of pixel data
+                    reg_next.rgb_reg(7 DOWNTO 5) <= ov7670_data(3 downto 1); --capture first byte of pixel data
                     reg_next.state <= capture_rgb_byte;
                 END IF;
 
             WHEN capture_rgb_byte =>
                 IF pclk_edge = '1' THEN
-                    reg_next.rgb_reg(1 DOWNTO 0) <= ov7670_data(1 downto 0); --capture first byte of pixel data
+                    reg_next.rgb_reg(4 DOWNTO 2) <= ov7670_data(7 downto 5); --capture first byte of pixel data
+                    reg_next.rgb_reg(1 DOWNTO 0) <= ov7670_data(3 downto 2); --capture first byte of pixel data
+
 
                     reg_next.pixel_reg <= reg.pixel_reg + 1; --keep track of current pixel position in line
 

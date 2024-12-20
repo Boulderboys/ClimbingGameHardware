@@ -1,11 +1,11 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2024.1.2 (win64) Build 5164865 Thu Sep  5 14:37:11 MDT 2024
-// Date        : Tue Dec 17 12:08:49 2024
-// Host        : JACCO-GIGABYTE running 64-bit major release  (build 9200)
+// Tool Version: Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
+// Date        : Thu Dec 19 14:05:26 2024
+// Host        : LAPTOP-99UU5IRC running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
-//               c:/Boulderboys/hardware/src/vhdl/OV7670/ip/clk_gen/clk_generator_1/clk_generator_stub.v
+//               c:/Users/lucmb/Desktop/school/jaar_4/KBS/ClimbingGameHardware/src/vhdl/OV7670/ip/clk_gen/clk_generator_1/clk_generator_stub.v
 // Design      : clk_generator
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a100tcsg324-1

@@ -1,9 +1,9 @@
 #*****************************************************************************************
-# Vivado (TM) v2024.1.2 (64-bit)
+# Vivado (TM) v2024.1 (64-bit)
 #
 # ClimbingGameHardware.tcl: Tcl script for re-creating project 'ClimbingGameHardware'
 #
-# IP Build 5164407 on Fri Sep  6 08:18:11 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
 #
 # This file contains the Vivado Tcl commands for re-creating the project to the state*
 # when this script was generated. In order to re-create the project, please source this
@@ -20,7 +20,6 @@ proc checkRequiredFiles { origin_dir} {
   set files [list \
  "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
- "[file normalize "$origin_dir/ips/ila_0/ila_0.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/debounce/debounce.vhd"]"\
@@ -37,8 +36,9 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram_axi_lite/blk_mem_axi_lite.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram_axi/blk_mem_axi.xci"]"\
  "[file normalize "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"]"\
- "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
+ "[file normalize "$origin_dir/ips/ila_0/ila_0.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
+ "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
  "[file normalize "$origin_dir/src/constraints/Nexys_A7_100T-Master.xdc"]"\
   ]
   foreach ifile $files {
@@ -136,7 +136,7 @@ set proj_dir [get_property directory [current_project]]
 
 # Set project properties
 set obj [current_project]
-set_property -name "board_part" -value "digilentinc.com:nexys-a7-100t:part0:1.3" -objects $obj
+set_property -name "board_part" -value "digilentinc.com:nexys-a7-100t:part0:1.2" -objects $obj
 set_property -name "default_lib" -value "xil_defaultlib" -objects $obj
 set_property -name "enable_resource_estimation" -value "0" -objects $obj
 set_property -name "enable_vhdl_2008" -value "1" -objects $obj
@@ -168,13 +168,12 @@ set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 set_property -name "target_simulator" -value "Questa" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "56" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "56" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "56" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "56" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "56" -objects $obj
-set_property -name "webtalk.xcelium_export_sim" -value "3" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "56" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "61" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "61" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "61" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "61" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "61" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "61" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -187,7 +186,6 @@ set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/src/vhdl/VgaScreen.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/AXI_BRAM_Controller.vhd"] \
- [file normalize "${origin_dir}/ips/ila_0/ila_0.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/common/common_pkg.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/debounce/debounce.vhd"] \
@@ -217,15 +215,6 @@ set file "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/ips/ila_0/ila_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
 
 set file "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"
 set file [file normalize $file]
@@ -340,12 +329,12 @@ set_property -name "top_auto_set" -value "0" -objects $obj
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- [file normalize "${origin_dir}/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"] \
+ [file normalize "${origin_dir}/ips/ila_0/ila_0.xci"] \
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"
+set file "$origin_dir/ips/ila_0/ila_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
@@ -367,6 +356,27 @@ add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
 set file "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
+
+# Set 'sources_1' fileset file properties for local files
+# None
+
+# Set 'sources_1' fileset object
+set obj [get_filesets sources_1]
+set files [list \
+ [file normalize "${origin_dir}/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"] \
+]
+add_files -norecurse -fileset $obj $files
+
+# Set 'sources_1' fileset file properties for remote files
+set file "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
@@ -428,14 +438,14 @@ if { [get_files VgaScreen.vhd] == "" } {
 if { [get_files AXI_BRAM_Controller.vhd] == "" } {
   import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
 }
+if { [get_files ila_0.xci] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/ips/ila_0/ila_0.xci"
+}
 if { [get_files vga_clk_gen.xci] == "" } {
   import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"
 }
 if { [get_files clk_generator.xci] == "" } {
   import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"
-}
-if { [get_files ila_0.xci] == "" } {
-  import_files -quiet -fileset sources_1 "$origin_dir/ips/ila_0/ila_0.xci"
 }
 if { [get_files common_pkg.vhd] == "" } {
   import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"
@@ -929,9 +939,8 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
-common::send_gid_msg -ssname BD::TCL -id 2050 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
-
   close_bd_design $design_name 
 }
 # End of cr_bd_bd_microblaze()

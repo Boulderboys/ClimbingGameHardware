@@ -17,11 +17,11 @@ ENTITY OV7670Top IS
         ov7670_reset : OUT STD_LOGIC;
         --sseg_o : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
         --sseg_cs_o : OUT STD_LOGIC;
-        VGA_HS_O : OUT STD_LOGIC;
-        VGA_VS_O : OUT STD_LOGIC;
-        VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
-        VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
-        VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+--        VGA_HS_O : OUT STD_LOGIC;
+--        VGA_VS_O : OUT STD_LOGIC;
+--        VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+--        VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+--        VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
         
         ram_addra : out STD_LOGIC_VECTOR(18 downto 0);
         ram_dina : out STD_LOGIC_VECTOR(7 downto 0);
@@ -197,11 +197,11 @@ BEGIN
             rst => rst,
             pxl_clk => pxl_clk,
             start => '1',
-            VGA_HS_O => VGA_HS_O,
-            VGA_VS_O => VGA_VS_O,
-            VGA_R => VGA_R,
-            VGA_G => VGA_G,
-            VGA_B => VGA_B,
+--            VGA_HS_O => VGA_HS_O,
+--            VGA_VS_O => VGA_VS_O,
+--            VGA_R => VGA_R,
+--            VGA_G => VGA_G,
+--            VGA_B => VGA_B,
 
             --frame_buffer signals 
             addrb => addrb,
