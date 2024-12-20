@@ -74,9 +74,10 @@ architecture logic of i2c_master is
   signal busy_r, busy_next				: std_logic;							-- busy flag
   signal ack_reg, ack_next				: std_logic;							-- acknowledge flag
   signal data_clk_re, data_clk_fe	: std_logic;							-- rising and falling edge of data_clk
-  
+  signal scl_ila : std_logic;
+  signal sda_ila : std_logic;
+    
 begin
-
 
 	-- register setup for i2c-bus clock and data clock
 	process(clk, reset_n)
@@ -284,12 +285,12 @@ begin
 	-- set scl and sda outputs
 	scl <= '0' when (scl_ena = '1' and scl_clk = '0') else 'Z';
 	sda <= '0' when sda_ena = '0' else 'Z';
-  
+	
 	-- set flag output
 	busy <= busy_r;
 	ack_error <= ack_reg;
 
 	-- set data_rd output
 	data_rd <= data_rx;	
-  
+	
 end logic;

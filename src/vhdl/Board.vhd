@@ -55,6 +55,26 @@ end Board;
 
 architecture Structural of Board is
 
+component OV7670Top is
+    Port (
+        clk : IN STD_LOGIC;
+        scl : INOUT STD_LOGIC;
+        sda : INOUT STD_LOGIC;
+        ov7670_vsync : IN STD_LOGIC;
+        ov7670_href : IN STD_LOGIC;
+        ov7670_pclk : IN STD_LOGIC;
+        ov7670_xclk : OUT STD_LOGIC;
+        ov7670_data : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+        btn : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        ov7670_pwdn : OUT STD_LOGIC;
+        ov7670_reset : OUT STD_LOGIC;
+        
+        ram_addra : out STD_LOGIC_VECTOR(18 downto 0);
+        ram_dina : out STD_LOGIC_VECTOR(11 downto 0);
+        ram_wea : out STD_LOGIC_VECTOR(0 downto 0)
+    );
+end component;
+
 component bd_microblaze_wrapper is
 port (
     VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -62,36 +82,56 @@ port (
     VGA_HS_o : out STD_LOGIC;
     VGA_R_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     VGA_VS_o : out STD_LOGIC;
-    btn_0 : in STD_LOGIC_VECTOR ( 3 downto 0 );
+    addra_cam_0 : in STD_LOGIC_VECTOR ( 18 downto 0 );
+    clk_out3_0 : out STD_LOGIC;
+    dina_cam_0 : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dip_switches_16bits_tri_i : in STD_LOGIC_VECTOR ( 15 downto 0 );
     led_16bits_tri_o : out STD_LOGIC_VECTOR ( 15 downto 0 );
-    ov7670_data_0 : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    ov7670_href_0 : in STD_LOGIC;
-    ov7670_pclk_0 : in STD_LOGIC;
-    ov7670_pwdn_0 : out STD_LOGIC;
-    ov7670_reset_0 : out STD_LOGIC;
-    ov7670_vsync_0 : in STD_LOGIC;
-    ov7670_xclk_0 : out STD_LOGIC;
     reset : in STD_LOGIC;
-    scl_0 : inout STD_LOGIC;
-    sda_0 : inout STD_LOGIC;
     sys_clock : in STD_LOGIC;
     usb_uart_rxd : in STD_LOGIC;
     usb_uart_txd : out STD_LOGIC;
-    used_by_processor_0 : in STD_LOGIC
+    used_by_processor_0 : in STD_LOGIC;
+    wea_cam_0 : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   end component bd_microblaze_wrapper;
-    
+  
+  signal camera_ram_addra : std_logic_vector(18 downto 0);
+  signal camera_ram_dina : std_logic_vector(11 downto 0);
+  signal camera_ram_wea : std_logic_vector(0 downto 0);
+  signal camera_clk : std_logic;
+  
 begin
     Microblaze : bd_Microblaze_Wrapper port map(
         VGA_B_o => VGA_B, VGA_G_o => VGA_G, VGA_R_o => VGA_R,
         VGA_HS_o => VGA_HS, VGA_VS_o => VGA_VS,
-        btn_0 => BTN(3 downto 0), dip_switches_16bits_tri_i => SW(15 downto 0), led_16bits_tri_o => LED(15 downto 0),
-        ov7670_data_0 => ov7670_data, ov7670_href_0 => JB(3), ov7670_pclk_0 => JB(10), ov7670_pwdn_0 => JA(1),
-        ov7670_reset_0 => JA(7), ov7670_vsync_0 => JB(8), ov7670_xclk_0 => JB(2), scl_0 => JB(9), sda_0 => JB(4),
+        dip_switches_16bits_tri_i => SW(15 downto 0), led_16bits_tri_o => LED(15 downto 0),
         reset => CPU_RESETN, 
         sys_clock => CLK100MHZ, usb_uart_rxd => UART_RXD_OUT, 
         usb_uart_txd => UART_TXD_IN,
+        
+        clk_out3_0 => camera_clk,
+        addra_cam_0 => camera_ram_addra, wea_cam_0 => camera_ram_wea,
+        dina_cam_0 => camera_ram_dina,
         used_by_processor_0 => SW(0)
     );
+    
+    Camera : OV7670Top port map(
+        clk => camera_clk,
+        scl => JB(9),
+        sda => JB(4),
+        ov7670_vsync => JB(8),
+        ov7670_href => JB(3),
+        ov7670_pclk => JB(10),
+        ov7670_xclk => JB(2),
+        ov7670_data => ov7670_data,
+        btn => BTN(3 downto 0),
+        ov7670_pwdn => JA(1),
+        ov7670_reset => JA(7),
+        
+        ram_addra => camera_ram_addra,
+        ram_dina => camera_ram_dina,
+        ram_wea => camera_ram_wea
+    );
+    
 end Structural;

@@ -17,14 +17,9 @@ ENTITY OV7670Top IS
         ov7670_reset : OUT STD_LOGIC;
         --sseg_o : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
         --sseg_cs_o : OUT STD_LOGIC;
-        VGA_HS_O : OUT STD_LOGIC;
-        VGA_VS_O : OUT STD_LOGIC;
-        VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
-        VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
-        VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
         
         ram_addra : out STD_LOGIC_VECTOR(18 downto 0);
-        ram_dina : out STD_LOGIC_VECTOR(7 downto 0);
+        ram_dina : out STD_LOGIC_VECTOR(11 downto 0);
         ram_wea : out STD_LOGIC_VECTOR(0 downto 0)
     );
 END OV7670Top;
@@ -66,6 +61,8 @@ ARCHITECTURE rtl OF OV7670Top IS
             doutb : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
         );
     END COMPONENT;
+    
+
 
     SIGNAL sseg_byte : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
     SIGNAL config_finished : STD_LOGIC := '0';
@@ -77,11 +74,11 @@ ARCHITECTURE rtl OF OV7670Top IS
     SIGNAL vga_640x480_clk : STD_LOGIC := '0';
     SIGNAL xclk_ov7670 : STD_LOGIC := '0';
 
-    SIGNAL pixel_data : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL pixel_data : STD_LOGIC_VECTOR(15 DOWNTO 0) := (OTHERS => '0');
     SIGNAL ena : STD_LOGIC := '0';
     SIGNAL wea : STD_LOGIC_VECTOR(0 DOWNTO 0) := (OTHERS => '0');
     SIGNAL addra : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL dina : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL dina : STD_LOGIC_VECTOR(11 DOWNTO 0) := (OTHERS => '0');
     SIGNAL enb : STD_LOGIC := '0';
     SIGNAL addrb : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
     SIGNAL doutb : STD_LOGIC_VECTOR(11 DOWNTO 0) := (OTHERS => '0');
@@ -161,6 +158,8 @@ BEGIN
 --        addrb => addrb,
 --        doutb => doutb
 --    );
+
+
     
     ram_wea <= wea;
     ram_dina <= dina;
@@ -189,24 +188,6 @@ BEGIN
         btn => btn,
         edge => edge
         );
-        
     
-    vga_controller : ENTITY work.vga_controller(rtl)
-        PORT MAP(
-            clk => clk,
-            rst => rst,
-            pxl_clk => pxl_clk,
-            start => '1',
-            VGA_HS_O => VGA_HS_O,
-            VGA_VS_O => VGA_VS_O,
-            VGA_R => VGA_R,
-            VGA_G => VGA_G,
-            VGA_B => VGA_B,
-
-            --frame_buffer signals 
-            addrb => addrb,
-            doutb => doutb
-        );
-
 
 END ARCHITECTURE;
