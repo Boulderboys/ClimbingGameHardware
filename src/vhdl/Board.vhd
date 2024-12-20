@@ -77,7 +77,7 @@ end component;
 
 component bd_microblaze_wrapper is
 port (
-    VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
+VGA_B_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     VGA_G_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     VGA_HS_o : out STD_LOGIC;
     VGA_R_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -88,6 +88,7 @@ port (
     dip_switches_16bits_tri_i : in STD_LOGIC_VECTOR ( 15 downto 0 );
     led_16bits_tri_o : out STD_LOGIC_VECTOR ( 15 downto 0 );
     reset : in STD_LOGIC;
+    start_0 : in STD_LOGIC;
     sys_clock : in STD_LOGIC;
     usb_uart_rxd : in STD_LOGIC;
     usb_uart_txd : out STD_LOGIC;
@@ -109,6 +110,7 @@ begin
         reset => CPU_RESETN, 
         sys_clock => CLK100MHZ, usb_uart_rxd => UART_RXD_OUT, 
         usb_uart_txd => UART_TXD_IN,
+        start_0 => BTN(3),
         
         clk_out3_0 => camera_clk,
         addra_cam_0 => camera_ram_addra, wea_cam_0 => camera_ram_wea,

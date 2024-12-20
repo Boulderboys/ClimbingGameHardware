@@ -4,82 +4,86 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity VgaScreen is
     Port (
-        vga_r : out std_logic_vector(3 downto 0);
-        vga_g : out std_logic_vector(3 downto 0);
-        vga_b : out std_logic_vector(3 downto 0);
-        vga_hs : out std_logic;
-        vga_vs : out std_logic;
-        clk : in std_logic;
---        reset : in std_logic;
-        bram_addr   : out std_logic_vector(18 downto 0) := (others => '0');
-        bram_data   : in  std_logic_vector(11 downto 0)
+        clk : IN STD_LOGIC;
+        rst : IN STD_LOGIC;
+        VGA_HS_O : OUT STD_LOGIC;
+        VGA_VS_O : OUT STD_LOGIC;
+        VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+        VGA_B : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+        VGA_G : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+
+        start : IN STD_LOGIC;
+
+        --frame_buffer signals
+        addrb : OUT STD_LOGIC_VECTOR(18 DOWNTO 0);
+        doutb : IN STD_LOGIC_VECTOR(11 DOWNTO 0) --pixel data
     );
 end VgaScreen;
 
 architecture Behavioral of vgaScreen is
+    --***640x480@60Hz***--  Requires 25 MHz clock
+    CONSTANT FRAME_WIDTH : NATURAL := 640;
+    CONSTANT FRAME_HEIGHT : NATURAL := 480;
 
-    signal h_cnt : unsigned(10 downto 0) := (others => '0');
-    signal v_cnt : unsigned(10 downto 0) := (others => '0');
-    
-    constant H_ACTIVE    : integer := 640;
-    constant H_FP        : integer := 16;
-    constant H_SYNC      : integer := 96;
-    constant H_BP        : integer := 48;
-    constant H_TOTAL     : integer := 800;
-    
+    CONSTANT H_FRONT_PORCH : NATURAL := 16; --H front porch width (pixels)
+    CONSTANT H_SYNC_PULSE_WIDTH : NATURAL := 96; --H sync pulse width (pixels)
+    CONSTANT H_TOTAL_LINE : NATURAL := 800; --H total period (pixels) 
 
-    constant V_ACTIVE    : integer := 480;
-    constant V_FP        : integer := 10;
-    constant V_SYNC      : integer := 2;
-    constant V_BP        : integer := 33;
-    constant V_TOTAL     : integer := 525;
-    
-    constant Picture_size : integer := 307200;
-   
-    
-begin                 
-    -- Horizontale en verticale teller
- counters:   process(clk)
-    begin
-        if false  then
-            h_cnt <= (others => '0');
-            v_cnt <= (others => '0');
-        elsif rising_edge(clk) then
-            if h_cnt = H_TOTAL - 1 then
-                h_cnt <= (others => '0');
-                if v_cnt = V_TOTAL - 1 then
-                    v_cnt <= (others => '0');
-                else
-                    v_cnt <= v_cnt + 1;
-                end if;
-            else
-                h_cnt <= h_cnt + 1;
-            end if;  
-            bram_addr <= std_logic_vector(
-                resize(v_cnt * to_unsigned(H_ACTIVE, v_cnt'length) + h_cnt, bram_addr'length)
-            );
-        end if;
-    end process;
-    -- Synchronisatiesignalen
-    vga_hs <= '0' when (h_cnt >= H_ACTIVE + H_FP and h_cnt < H_ACTIVE + H_FP + H_SYNC) else '1';
-    vga_vs <= '0' when (v_cnt >= V_ACTIVE + V_FP and v_cnt < V_ACTIVE + V_FP + V_SYNC) else '1';
-    
-VGAdraw : process(h_cnt, v_cnt, clk)
-begin
-    if rising_edge(clk) then
-        
-        if h_cnt < H_ACTIVE and v_cnt < V_ACTIVE then          
-            vga_r(3 downto 0) <= bram_data(11 downto 8 );
-            vga_g(3 downto 0) <= bram_data(7 downto 4 );
-            vga_b(3 downto 0) <= bram_data(3 downto 0 );
-        else
-            vga_r <= (others => '0');
-            vga_g <= (others => '0');
-            vga_b <= (others => '0');
-        end if;
-        
-     end if;
-end process;
-    
+    CONSTANT V_FRONT_PORCH : NATURAL := 10; --vertical front porch width (lines)
+    CONSTANT V_SYNC_PULSE_WIDTH : NATURAL := 2; --vertical sync pulse width (lines)
+    CONSTANT V_MAX_LINE : NATURAL := 525; --vertical total period (lines)
 
+    CONSTANT H_POL : STD_LOGIC := '0';
+    CONSTANT V_POL : STD_LOGIC := '0';
+
+    SIGNAL hsync_reg, hsync_next : INTEGER RANGE 0 TO H_TOTAL_LINE - 1 := 0;
+    SIGNAL vsync_reg, vsync_next : INTEGER RANGE 0 TO V_MAX_LINE - 1 := 0;
+
+    SIGNAL bram_address_reg, bram_address_next : unsigned(18 DOWNTO 0) := (OTHERS => '0');
+
+    SIGNAL line_finished : STD_LOGIC := '0';
+    SIGNAL frame_finished : STD_LOGIC := '0';
+
+BEGIN
+    addrb <= STD_LOGIC_VECTOR(bram_address_reg);
+
+    hsync_next <= 0 WHEN line_finished = '1' AND start = '1' ELSE
+        hsync_reg + 1 WHEN start = '1' ELSE
+        hsync_reg;
+
+    line_finished <= '1' WHEN hsync_reg = H_TOTAL_LINE - 1 ELSE
+        '0';
+
+    VGA_HS_O <= '0' WHEN hsync_reg >= (H_FRONT_PORCH + FRAME_WIDTH) AND hsync_reg < (H_FRONT_PORCH + FRAME_WIDTH + H_SYNC_PULSE_WIDTH) ELSE
+        '1'; --HSync Timing
+
+    VGA_VS_O <= '0' WHEN vsync_reg >= (V_FRONT_PORCH + FRAME_HEIGHT) AND vsync_reg < (V_FRONT_PORCH + FRAME_HEIGHT + V_SYNC_PULSE_WIDTH) ELSE
+        '1'; --VSync timing
+
+    frame_finished <= '1' WHEN vsync_reg = V_MAX_LINE - 1 ELSE
+        '0';
+
+    vga_r <= doutb(11 DOWNTO 8) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+        "0000";
+    vga_g <= doutb(7 DOWNTO 4) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+        "0000";
+    vga_b <= doutb(3 DOWNTO 0) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+        "0000";
+
+    vsync_next <= 0 WHEN frame_finished = '1' AND start = '1' ELSE
+        vsync_reg + 1 WHEN line_finished = '1' AND start = '1' ELSE
+        vsync_reg;
+
+    bram_address_next <= (OTHERS => '0') WHEN vsync_reg = V_MAX_LINE - 1 AND start = '1' ELSE
+        bram_address_reg + 1 WHEN hsync_reg < FRAME_WIDTH - 1 AND vsync_reg < FRAME_HEIGHT - 1 AND start = '1'ELSE
+        bram_address_reg;
+
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            hsync_reg <= hsync_next;
+            vsync_reg <= vsync_next;
+            bram_address_reg <= bram_address_next;
+        END IF;
+    END PROCESS;
 end Behavioral;

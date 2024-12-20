@@ -47,9 +47,6 @@ entity BRAMSelector is
         dina_out : out STD_LOGIC_VECTOR(11 downto 0);
         wea_out : out STD_LOGIC_VECTOR(0 downto 0);
         
-        doutb_in : in STD_LOGIC_VECTOR(11 downto 0);
-        
-        doutb_out : out STD_LOGIC_VECTOR(11 downto 0);
         used_by_processor : in STD_LOGIC
     );
 end BRAMSelector;
@@ -94,7 +91,5 @@ begin
     dina_processor_12bits <= dina_processor(7 downto 5) & '0' & dina_processor(4 downto 2) & '0' & dina_processor(1 downto 0) & "00";
     dina_out <= dina_processor_12bits when used_by_processor = '1' else dina_cam;
     wea_out <= wea_processor when used_by_processor = '1' else wea_cam;
-    doutb_out <= doutb_in;
-    
 
 end Behavioral;

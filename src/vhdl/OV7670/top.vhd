@@ -116,15 +116,6 @@ BEGIN
         locked => OPEN
     );
 
-    vga_pll : vga_clk_gen
-    PORT MAP
-    (-- Clock in ports
-        clk_in1 => clk,
-        reset => '0',
-        locked => OPEN,
-        -- Clock out ports
-        clk_out1 => pxl_clk
-    );
 
     ov7670_xclk <= xclk_ov7670;
 

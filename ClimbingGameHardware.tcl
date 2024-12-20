@@ -21,7 +21,6 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/BRAMSelector.vhd"]"\
- "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"]"\
@@ -31,6 +30,7 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/ov7670_configuration.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/top.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/Board.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/VGASelector.vhd"]"\
@@ -168,12 +168,13 @@ set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 set_property -name "target_simulator" -value "Questa" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "73" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "73" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "73" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "73" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "73" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "73" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "83" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "83" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "83" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "83" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "83" -objects $obj
+set_property -name "webtalk.xcelium_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "83" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -187,7 +188,6 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/VgaScreen.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/AXI_BRAM_Controller.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/BRAMSelector.vhd"] \
- [file normalize "${origin_dir}/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/common/common_pkg.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"] \
@@ -197,6 +197,7 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/ov7670_configuration.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/top.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/Board.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/VGASelector.vhd"] \
@@ -222,15 +223,6 @@ set file "$origin_dir/src/vhdl/BRAMSelector.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
 
 set file "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"
 set file [file normalize $file]
@@ -280,6 +272,15 @@ set file "$origin_dir/src/vhdl/Board.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
 
 set file "$origin_dir/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"
 set file [file normalize $file]
@@ -452,6 +453,7 @@ proc cr_bd_bd_microblaze { parentCell } {
   xilinx.com:ip:axi_gpio:2.0\
   xilinx.com:ip:blk_mem_gen:8.4\
   xilinx.com:ip:smartconnect:1.0\
+  xilinx.com:ip:xlconstant:1.1\
   xilinx.com:ip:lmb_v10:3.0\
   xilinx.com:ip:lmb_bram_if_cntlr:4.0\
   "
@@ -643,6 +645,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set addra_cam_0 [ create_bd_port -dir I -from 18 -to 0 addra_cam_0 ]
   set clk_out3_0 [ create_bd_port -dir O -type clk clk_out3_0 ]
   set dina_cam_0 [ create_bd_port -dir I -from 11 -to 0 dina_cam_0 ]
+  set start_0 [ create_bd_port -dir I start_0 ]
 
   # Create instance: microblaze_riscv_0, and set properties
   set microblaze_riscv_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze_riscv:1.0 microblaze_riscv_0 ]
@@ -798,6 +801,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
      return 1
    }
   
+  # Create instance: xlconstant_0, and set properties
+  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
+
   # Create interface connections
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_16bits] [get_bd_intf_pins axi_gpio_0/GPIO]
   connect_bd_intf_net -intf_net axi_gpio_1_GPIO [get_bd_intf_ports dip_switches_16bits] [get_bd_intf_pins axi_gpio_1/GPIO]
@@ -819,16 +825,15 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net BRAMSelector_0_addra_out [get_bd_pins BRAMSelector_0/addra_out] [get_bd_pins blk_mem_gen_0/addra]
   connect_bd_net -net BRAMSelector_0_clk_out [get_bd_pins BRAMSelector_0/clk_out] [get_bd_pins blk_mem_gen_0/clka]
   connect_bd_net -net BRAMSelector_0_dina_out [get_bd_pins BRAMSelector_0/dina_out] [get_bd_pins blk_mem_gen_0/dina]
-  connect_bd_net -net BRAMSelector_0_doutb_out [get_bd_pins BRAMSelector_0/doutb_out] [get_bd_pins VgaScreen_0/bram_data]
   connect_bd_net -net BRAMSelector_0_wea_out [get_bd_pins BRAMSelector_0/wea_out] [get_bd_pins blk_mem_gen_0/wea]
-  connect_bd_net -net VgaScreen_0_bram_addr [get_bd_pins VgaScreen_0/bram_addr] [get_bd_pins blk_mem_gen_0/addrb]
-  connect_bd_net -net VgaScreen_0_vga_b [get_bd_pins VgaScreen_0/vga_b] [get_bd_ports VGA_B_o]
-  connect_bd_net -net VgaScreen_0_vga_g [get_bd_pins VgaScreen_0/vga_g] [get_bd_ports VGA_G_o]
-  connect_bd_net -net VgaScreen_0_vga_hs [get_bd_pins VgaScreen_0/vga_hs] [get_bd_ports VGA_HS_o]
-  connect_bd_net -net VgaScreen_0_vga_r [get_bd_pins VgaScreen_0/vga_r] [get_bd_ports VGA_R_o]
-  connect_bd_net -net VgaScreen_0_vga_vs [get_bd_pins VgaScreen_0/vga_vs] [get_bd_ports VGA_VS_o]
+  connect_bd_net -net VgaScreen_0_bram_addr [get_bd_pins VgaScreen_0/addrb] [get_bd_pins blk_mem_gen_0/addrb]
+  connect_bd_net -net VgaScreen_0_vga_b [get_bd_pins VgaScreen_0/VGA_B] [get_bd_ports VGA_B_o]
+  connect_bd_net -net VgaScreen_0_vga_g [get_bd_pins VgaScreen_0/VGA_G] [get_bd_ports VGA_G_o]
+  connect_bd_net -net VgaScreen_0_vga_hs [get_bd_pins VgaScreen_0/VGA_HS_O] [get_bd_ports VGA_HS_o]
+  connect_bd_net -net VgaScreen_0_vga_r [get_bd_pins VgaScreen_0/VGA_R] [get_bd_ports VGA_R_o]
+  connect_bd_net -net VgaScreen_0_vga_vs [get_bd_pins VgaScreen_0/VGA_VS_O] [get_bd_ports VGA_VS_o]
   connect_bd_net -net addra_cam_0_1 [get_bd_ports addra_cam_0] [get_bd_pins BRAMSelector_0/addra_cam]
-  connect_bd_net -net blk_mem_gen_0_doutb [get_bd_pins blk_mem_gen_0/doutb] [get_bd_pins BRAMSelector_0/doutb_in]
+  connect_bd_net -net blk_mem_gen_0_doutb [get_bd_pins blk_mem_gen_0/doutb] [get_bd_pins VgaScreen_0/doutb]
   connect_bd_net -net clk_wiz_1_clk_out1 [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins smartconnect_0/aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins rst_clk_wiz_1_100M/slowest_sync_clk] [get_bd_pins blk_mem_gen_0/clkb] [get_bd_pins AXI_BRAM_Controller_0/s_axi_aclk]
   connect_bd_net -net clk_wiz_1_clk_out2 [get_bd_pins clk_wiz_1/clk_out2] [get_bd_pins VgaScreen_0/clk]
   connect_bd_net -net clk_wiz_1_clk_out3 [get_bd_pins clk_wiz_1/clk_out3] [get_bd_ports clk_out3_0]
@@ -843,6 +848,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net sys_clock_1 [get_bd_ports sys_clock] [get_bd_pins clk_wiz_1/clk_in1]
   connect_bd_net -net used_by_processor_0_1 [get_bd_ports used_by_processor_0] [get_bd_pins BRAMSelector_0/used_by_processor]
   connect_bd_net -net wea_cam_0_1 [get_bd_ports wea_cam_0] [get_bd_pins BRAMSelector_0/wea_cam]
+  connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins VgaScreen_0/start]
 
   # Create address segments
   assign_bd_address -offset 0x00080000 -range 0x00040000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
@@ -856,9 +862,8 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
-common::send_gid_msg -ssname BD::TCL -id 2050 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
-
   close_bd_design $design_name 
 }
 # End of cr_bd_bd_microblaze()
@@ -897,7 +902,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
