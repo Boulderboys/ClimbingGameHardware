@@ -18,9 +18,6 @@
 proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
- "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
- "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
- "[file normalize "$origin_dir/src/vhdl/BRAMSelector.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/common/common_pkg.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"]"\
@@ -30,6 +27,12 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/camera/ov7670_configuration.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/top.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/Board.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/VgaScreen.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/BRAMSelector.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/PixelBuffer.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/SobelTypes.vhd"]"\
+ "[file normalize "$origin_dir/src/vhdl/SobelFilter.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"]"\
@@ -167,14 +170,14 @@ set_property -name "simulator.xsim_version" -value "2024.1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
-set_property -name "target_simulator" -value "Questa" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "83" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "83" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "83" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "83" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "83" -objects $obj
-set_property -name "webtalk.xcelium_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "83" -objects $obj
+set_property -name "target_simulator" -value "Riviera" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "49" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "49" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "49" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "49" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "49" -objects $obj
+set_property -name "webtalk.xcelium_export_sim" -value "3" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "49" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -185,9 +188,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- [file normalize "${origin_dir}/src/vhdl/VgaScreen.vhd"] \
- [file normalize "${origin_dir}/src/vhdl/AXI_BRAM_Controller.vhd"] \
- [file normalize "${origin_dir}/src/vhdl/BRAMSelector.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/common/common_pkg.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/OV7670_fsm.vhd"] \
@@ -197,6 +197,12 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/camera/ov7670_configuration.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/top.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/Board.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/VgaScreen.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/AXI_BRAM_Controller.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/BRAMSelector.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/PixelBuffer.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/SobelTypes.vhd"] \
+ [file normalize "${origin_dir}/src/vhdl/SobelFilter.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"] \
@@ -205,25 +211,11 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram_axi_lite/blk_mem_axi_lite.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram_axi/blk_mem_axi.xci"] \
  [file normalize "${origin_dir}/ips/clk_wiz_0/clk_wiz_0.xci"] \
+ [file normalize "${origin_dir}/ips/ila_0/ila_0.xci"] \
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/src/vhdl/VgaScreen.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/src/vhdl/BRAMSelector.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
 set file "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -269,6 +261,36 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
 set file "$origin_dir/src/vhdl/Board.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/VgaScreen.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/AXI_BRAM_Controller.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/BRAMSelector.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/PixelBuffer.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/SobelTypes.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/SobelFilter.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -337,24 +359,6 @@ if { ![get_property "is_locked" $file_obj] } {
   set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
 }
 
-
-# Set 'sources_1' fileset file properties for local files
-# None
-
-# Set 'sources_1' fileset properties
-set obj [get_filesets sources_1]
-set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
-set_property -name "top" -value "Board" -objects $obj
-set_property -name "top_auto_set" -value "0" -objects $obj
-
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
-set files [list \
- [file normalize "${origin_dir}/ips/ila_0/ila_0.xci"] \
-]
-add_files -norecurse -fileset $obj $files
-
-# Set 'sources_1' fileset file properties for remote files
 set file "$origin_dir/ips/ila_0/ila_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -367,6 +371,12 @@ if { ![get_property "is_locked" $file_obj] } {
 
 # Set 'sources_1' fileset file properties for local files
 # None
+
+# Set 'sources_1' fileset properties
+set obj [get_filesets sources_1]
+set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
+set_property -name "top" -value "Board" -objects $obj
+set_property -name "top_auto_set" -value "0" -objects $obj
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -420,13 +430,22 @@ if { [get_files AXI_BRAM_Controller.vhd] == "" } {
 if { [get_files BRAMSelector.vhd] == "" } {
   import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/BRAMSelector.vhd"
 }
+if { [get_files PixelBuffer.vhd] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/PixelBuffer.vhd"
+}
+if { [get_files SobelTypes.vhd] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/SobelTypes.vhd"
+}
+if { [get_files SobelFilter.vhd] == "" } {
+  import_files -quiet -fileset sources_1 "$origin_dir/src/vhdl/SobelFilter.vhd"
+}
 
 
 # Proc to create BD bd_microblaze
 proc cr_bd_bd_microblaze { parentCell } {
 # The design that will be created by this Tcl proc contains the following 
 # module references:
-# VgaScreen, AXI_BRAM_Controller, BRAMSelector
+# VgaScreen, AXI_BRAM_Controller, BRAMSelector, PixelBuffer, SobelFilter
 
 
 
@@ -484,6 +503,8 @@ proc cr_bd_bd_microblaze { parentCell } {
   VgaScreen\
   AXI_BRAM_Controller\
   BRAMSelector\
+  PixelBuffer\
+  SobelFilter\
   "
 
    set list_mods_missing ""
@@ -635,7 +656,6 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set_property -dict [ list \
    CONFIG.POLARITY {ACTIVE_LOW} \
  ] $reset
-  set VGA_B_o [ create_bd_port -dir O -from 3 -to 0 VGA_B_o ]
   set VGA_G_o [ create_bd_port -dir O -from 3 -to 0 VGA_G_o ]
   set VGA_HS_o [ create_bd_port -dir O VGA_HS_o ]
   set VGA_R_o [ create_bd_port -dir O -from 3 -to 0 VGA_R_o ]
@@ -646,6 +666,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   set clk_out3_0 [ create_bd_port -dir O -type clk clk_out3_0 ]
   set dina_cam_0 [ create_bd_port -dir I -from 11 -to 0 dina_cam_0 ]
   set start_0 [ create_bd_port -dir I start_0 ]
+  set VGA_B_o [ create_bd_port -dir O -from 3 -to 0 VGA_B_o ]
 
   # Create instance: microblaze_riscv_0, and set properties
   set microblaze_riscv_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze_riscv:1.0 microblaze_riscv_0 ]
@@ -678,6 +699,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
     CONFIG.CLKOUT3_DRIVES {BUFG} \
     CONFIG.CLKOUT3_JITTER {137.681} \
     CONFIG.CLKOUT3_PHASE_ERROR {105.461} \
+    CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {100} \
     CONFIG.CLKOUT3_USED {true} \
     CONFIG.CLKOUT4_DRIVES {BUFG} \
     CONFIG.CLKOUT5_DRIVES {BUFG} \
@@ -801,6 +823,28 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
      return 1
    }
   
+  # Create instance: PixelBuffer_0, and set properties
+  set block_name PixelBuffer
+  set block_cell_name PixelBuffer_0
+  if { [catch {set PixelBuffer_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $PixelBuffer_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  # Create instance: SobelFilter_0, and set properties
+  set block_name SobelFilter
+  set block_cell_name SobelFilter_0
+  if { [catch {set SobelFilter_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $SobelFilter_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create instance: xlconstant_0, and set properties
   set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
 
@@ -826,19 +870,27 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net BRAMSelector_0_clk_out [get_bd_pins BRAMSelector_0/clk_out] [get_bd_pins blk_mem_gen_0/clka]
   connect_bd_net -net BRAMSelector_0_dina_out [get_bd_pins BRAMSelector_0/dina_out] [get_bd_pins blk_mem_gen_0/dina]
   connect_bd_net -net BRAMSelector_0_wea_out [get_bd_pins BRAMSelector_0/wea_out] [get_bd_pins blk_mem_gen_0/wea]
+  connect_bd_net -net PixelBuffer_0_pixel_b [get_bd_pins PixelBuffer_0/pixel_b] [get_bd_pins SobelFilter_0/filter_data_b]
+  connect_bd_net -net PixelBuffer_0_pixel_bl [get_bd_pins PixelBuffer_0/pixel_bl] [get_bd_pins SobelFilter_0/filter_data_bl]
+  connect_bd_net -net PixelBuffer_0_pixel_br [get_bd_pins PixelBuffer_0/pixel_br] [get_bd_pins SobelFilter_0/filter_data_br]
+  connect_bd_net -net PixelBuffer_0_pixel_c [get_bd_pins PixelBuffer_0/pixel_c] [get_bd_pins SobelFilter_0/filter_data_c]
+  connect_bd_net -net PixelBuffer_0_pixel_l [get_bd_pins PixelBuffer_0/pixel_l] [get_bd_pins SobelFilter_0/filter_data_l]
+  connect_bd_net -net PixelBuffer_0_pixel_r [get_bd_pins PixelBuffer_0/pixel_r] [get_bd_pins SobelFilter_0/filter_data_r]
+  connect_bd_net -net PixelBuffer_0_pixel_t [get_bd_pins PixelBuffer_0/pixel_t] [get_bd_pins SobelFilter_0/filter_data_t]
+  connect_bd_net -net PixelBuffer_0_pixel_tl [get_bd_pins PixelBuffer_0/pixel_tl] [get_bd_pins SobelFilter_0/filter_data_tl]
+  connect_bd_net -net PixelBuffer_0_pixel_tr [get_bd_pins PixelBuffer_0/pixel_tr] [get_bd_pins SobelFilter_0/filter_data_tr]
+  connect_bd_net -net SobelFilter_0_filter_pixel_ready [get_bd_pins SobelFilter_0/filter_pixel_ready] [get_bd_pins PixelBuffer_0/ready]
   connect_bd_net -net VgaScreen_0_bram_addr [get_bd_pins VgaScreen_0/addrb] [get_bd_pins blk_mem_gen_0/addrb]
   connect_bd_net -net VgaScreen_0_vga_b [get_bd_pins VgaScreen_0/VGA_B] [get_bd_ports VGA_B_o]
   connect_bd_net -net VgaScreen_0_vga_g [get_bd_pins VgaScreen_0/VGA_G] [get_bd_ports VGA_G_o]
   connect_bd_net -net VgaScreen_0_vga_hs [get_bd_pins VgaScreen_0/VGA_HS_O] [get_bd_ports VGA_HS_o]
   connect_bd_net -net VgaScreen_0_vga_r [get_bd_pins VgaScreen_0/VGA_R] [get_bd_ports VGA_R_o]
   connect_bd_net -net VgaScreen_0_vga_vs [get_bd_pins VgaScreen_0/VGA_VS_O] [get_bd_ports VGA_VS_o]
-  connect_bd_net -net addra_cam_0_1 [get_bd_ports addra_cam_0] [get_bd_pins BRAMSelector_0/addra_cam]
-  connect_bd_net -net blk_mem_gen_0_doutb [get_bd_pins blk_mem_gen_0/doutb] [get_bd_pins VgaScreen_0/doutb]
+  connect_bd_net -net blk_mem_gen_0_doutb [get_bd_pins blk_mem_gen_0/doutb] [get_bd_pins PixelBuffer_0/input_pixel]
   connect_bd_net -net clk_wiz_1_clk_out1 [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins smartconnect_0/aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins rst_clk_wiz_1_100M/slowest_sync_clk] [get_bd_pins blk_mem_gen_0/clkb] [get_bd_pins AXI_BRAM_Controller_0/s_axi_aclk]
   connect_bd_net -net clk_wiz_1_clk_out2 [get_bd_pins clk_wiz_1/clk_out2] [get_bd_pins VgaScreen_0/clk]
   connect_bd_net -net clk_wiz_1_clk_out3 [get_bd_pins clk_wiz_1/clk_out3] [get_bd_ports clk_out3_0]
   connect_bd_net -net clk_wiz_1_locked [get_bd_pins clk_wiz_1/locked] [get_bd_pins rst_clk_wiz_1_100M/dcm_locked]
-  connect_bd_net -net dina_cam_1_1 [get_bd_ports dina_cam_0] [get_bd_pins BRAMSelector_0/dina_cam]
   connect_bd_net -net mdm_1_debug_sys_rst [get_bd_pins mdm_1/Debug_SYS_Rst] [get_bd_pins rst_clk_wiz_1_100M/mb_debug_sys_rst]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins reset_inv_0/Op1] [get_bd_pins rst_clk_wiz_1_100M/ext_reset_in]
   connect_bd_net -net reset_inv_0_Res [get_bd_pins reset_inv_0/Res] [get_bd_pins clk_wiz_1/reset]
@@ -851,7 +903,7 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins VgaScreen_0/start]
 
   # Create address segments
-  assign_bd_address -offset 0x00080000 -range 0x00040000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
+  assign_bd_address -offset 0x00080000 -range 0x00080000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AXI_BRAM_Controller_0/s_axi/reg0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force
@@ -862,8 +914,9 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
-  validate_bd_design
   save_bd_design
+common::send_gid_msg -ssname BD::TCL -id 2050 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
+
   close_bd_design $design_name 
 }
 # End of cr_bd_bd_microblaze()
