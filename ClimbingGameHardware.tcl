@@ -863,7 +863,8 @@ proc create_hier_cell_microblaze_riscv_0_local_memory { parentCell nameHier } {
   connect_bd_intf_net -intf_net smartconnect_0_M03_AXI [get_bd_intf_pins smartconnect_0/M03_AXI] [get_bd_intf_pins axi_uartlite_0/S_AXI]
 
   # Create port connections
-  connect_bd_net -net AXI_BRAM_Controller_0_bram_clk [get_bd_pins AXI_BRAM_Controller_0/bram_clk] [get_bd_pins BRAMSelector_0/clk] [get_bd_pins BRAMSelector_0/addra_processor]
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_addr [get_bd_pins AXI_BRAM_Controller_0/bram_addr] [get_bd_pins BRAMSelector_0/addra_processor]
+  connect_bd_net -net AXI_BRAM_Controller_0_bram_clk [get_bd_pins AXI_BRAM_Controller_0/bram_clk] [get_bd_pins BRAMSelector_0/clk]
   connect_bd_net -net AXI_BRAM_Controller_0_bram_din [get_bd_pins AXI_BRAM_Controller_0/bram_din] [get_bd_pins BRAMSelector_0/dina_processor]
   connect_bd_net -net AXI_BRAM_Controller_0_bram_we [get_bd_pins AXI_BRAM_Controller_0/bram_we] [get_bd_pins BRAMSelector_0/wea_processor]
   connect_bd_net -net BRAMSelector_0_addra_out [get_bd_pins BRAMSelector_0/addra_out] [get_bd_pins blk_mem_gen_0/addra]
@@ -955,7 +956,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -1178,7 +1178,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
