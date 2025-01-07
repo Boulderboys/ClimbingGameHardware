@@ -53,37 +53,9 @@ end BRAMSelector;
 
 architecture Behavioral of BRAMSelector is
 
-	-- Build an enumerated type for the state machine
-	type ram_selector_state_type is (idle, switch, waiting_for_vsync);
-	
 	signal dina_processor_12bits : std_logic_vector(11 downto 0);
 	
---	signal ram_selector_state : ram_selector_state_type;
-	
 begin
---    process(clk, used_by_processor)
---    begin
---        case ram_selector_state is
---            when idle =>
---                if input = '1' then
---                    state <= s1;
---				else
---					state <= s0;
---				end if;
---			when s1=>
---				if input = '1' then
---				    state <= s2;
---				else
---					state <= s1;
---				end if;
---			when s2=>
---				if input = '1' then
---					state <= s3;
---				else
---					state <= s2;
---				end if;
---		end case;
---    end process;
     
     clk_out <= clk;
     

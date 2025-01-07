@@ -1,11 +1,12 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
 
-entity VgaScreen is
-    Port (
+ENTITY VgaScreenCamera IS
+    PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
+        pxl_clk : IN STD_LOGIC;
         VGA_HS_O : OUT STD_LOGIC;
         VGA_VS_O : OUT STD_LOGIC;
         VGA_R : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
@@ -18,9 +19,9 @@ entity VgaScreen is
         addrb : OUT STD_LOGIC_VECTOR(18 DOWNTO 0);
         doutb : IN STD_LOGIC_VECTOR(11 DOWNTO 0) --pixel data
     );
-end VgaScreen;
+END VgaScreenCamera;
 
-architecture Behavioral of vgaScreen is
+ARCHITECTURE rtl OF VgaScreenCamera IS
     --***640x480@60Hz***--  Requires 25 MHz clock
     CONSTANT FRAME_WIDTH : NATURAL := 640;
     CONSTANT FRAME_HEIGHT : NATURAL := 480;
@@ -63,11 +64,11 @@ BEGIN
     frame_finished <= '1' WHEN vsync_reg = V_MAX_LINE - 1 ELSE
         '0';
 
-    vga_r <= doutb(11 DOWNTO 8) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_r <= (doutb(11 DOWNTO 9) & '0' ) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
-    vga_g <= doutb(7 DOWNTO 4) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_g <= (doutb(7 DOWNTO 5) & '0') WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
-    vga_b <= doutb(3 DOWNTO 0) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_b <= (doutb(3 DOWNTO 1) & '0') WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
 
     vsync_next <= 0 WHEN frame_finished = '1' AND start = '1' ELSE
@@ -78,12 +79,12 @@ BEGIN
         bram_address_reg + 1 WHEN hsync_reg < FRAME_WIDTH - 1 AND vsync_reg < FRAME_HEIGHT - 1 AND start = '1'ELSE
         bram_address_reg;
 
-    PROCESS (clk)
+    PROCESS (pxl_clk)
     BEGIN
-        IF rising_edge(clk) THEN
+        IF rising_edge(pxl_clk) THEN
             hsync_reg <= hsync_next;
             vsync_reg <= vsync_next;
             bram_address_reg <= bram_address_next;
         END IF;
     END PROCESS;
-end Behavioral;
+END ARCHITECTURE;
