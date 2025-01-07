@@ -36,6 +36,13 @@ ARCHITECTURE rtl OF OV7670Top IS
 
     SIGNAL pxl_clk : STD_LOGIC := '0';
     
+    COMPONENT Greyscale
+    port (
+        data_in : in std_logic_vector(11 downto 0);
+        data_out : out std_logic_vector (11 downto 0));
+    end component;
+
+    
     COMPONENT clk_generator
         PORT (
             reset : IN STD_LOGIC;
@@ -81,6 +88,7 @@ ARCHITECTURE rtl OF OV7670Top IS
     SIGNAL wea : STD_LOGIC_VECTOR(0 DOWNTO 0) := (OTHERS => '0');
     SIGNAL addra : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
     SIGNAL dina : STD_LOGIC_VECTOR(11 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL greydina : std_logic_vector(11 downto 0) := (OTHERS => '0');
     SIGNAL enb : STD_LOGIC := '0';
     SIGNAL addrb : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
     SIGNAL doutb : STD_LOGIC_VECTOR(11 DOWNTO 0) := (OTHERS => '0');
@@ -97,6 +105,7 @@ BEGIN
                 frame_buffer_out_vga <= (others => '0');
             else
                 frame_buffer_out_processing <= (others => '0');
+                
                 frame_buffer_out_vga <= doutb;
             end if;
             buf1_vsync <= ov7670_vsync;
@@ -110,6 +119,7 @@ BEGIN
 
             buf1_data <= ov7670_data;
             buf2_data <= buf1_data;
+
         END IF;
     END PROCESS;
 
@@ -153,7 +163,13 @@ BEGIN
             config_finished => config_finished,
             reg_value => OPEN
         );
-
+    Grey: Greyscale 
+    port map
+    (
+        data_in => dina, 
+        data_out => greydina
+    );
+    
     --dual port bram
     frame_buffer : blk_mem_gen_1
     PORT MAP(
@@ -161,13 +177,13 @@ BEGIN
         wea => wea,
 --        ena => '1',
         addra => addra,
-        dina => dina,
+        dina => greydina,
         clkb => pxl_clk,
         enb => '1',
         addrb => addrb,
         doutb => doutb
     );
-
+    
     ov7670_capture : ENTITY work.ov7670_capture(rtl) PORT MAP(
         clk => clk,
         rst => rst,
@@ -179,7 +195,7 @@ BEGIN
         frame_finished_o => frame_finished,
         pixel_data => pixel_data,
         start => edge(3),
-
+        
         --frame_buffer signals
         wea => wea,
         dina => dina,
@@ -204,7 +220,7 @@ BEGIN
             VGA_R => VGA_R,
             VGA_G => VGA_G,
             VGA_B => VGA_B,
-
+            
             --frame_buffer signals 
             addrb => addrb,
             doutb => frame_buffer_out_vga

@@ -78,16 +78,6 @@ architecture Structural of Board is
             reset : in std_logic
         );
     end component VgaTest;
-    component MicroblazeNexysWrapper is
-        Port (
-            SW : in std_logic_vector(15 downto 0);
-            LED : out std_logic_vector(15 downto 0);
-            CPU_RESETN : in std_logic;
-            CLK100MHZ : in std_logic;
-            UART_RXD_OUT : in std_logic;
-            UART_TXD_IN : out std_logic
-        );
-    end component MicroblazeNexysWrapper;
     COMPONENT OV7670Top IS
     PORT (
         clk : IN STD_LOGIC;
@@ -127,7 +117,6 @@ begin
                                      VGA_G => VGA_G, frame_buffer_to_vga => '1'
                                      );
     clk_wiz : clk_wiz_0 port map(CLK100MHZ, '0', locked, clk_108mhz_vga, clk_90mhz_microblaze, clk_101mhz_camera);
-    Microblaze : MicroblazeNexysWrapper port map(SW, LED, CPU_RESETN, clk_90mhz_microblaze, UART_RXD_OUT, UART_TXD_IN);
 --    vgascreen: vgaTest port map (vga_r => VGA_R, vga_g => VGA_G, vga_b => VGA_B, vga_hs => VGA_HS, 
 --    vga_vs => VGA_VS, clk => clk_108mhz_vga, reset => '0');
 end Structural;
