@@ -20,6 +20,7 @@ To set up the project locally:
 
 ## Making changes
 When adding files, **do not save them to the local project directory**. Instead, save them to `src`, in the relevant subfolder.
+Vivado sometimes auto-generates a dcp file in the project, check the Utility Sources tab in Vivado and delete the dcp file before committing.
 If you're adding a block diagram, make sure it's local to the Vivado project. The git wrapper will generate the Tcl such that it regenerates the block design alongside the project.
 
 The git wrapper will regenerate the Tcl script any time you run `git commit -m "<commit message>"` in Vivado's Tcl console. If you prefer to do git operations in a different environment, such as VSCode or GitHub Desktop, you can instead generate the Tcl by doing `wproj` ("**w**rite **proj**ect) in the Tcl console, then adding and committing changes in the other environment.
