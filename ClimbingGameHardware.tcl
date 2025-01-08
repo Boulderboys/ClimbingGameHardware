@@ -18,7 +18,18 @@
 proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
+ "[file normalize "$origin_dir/vivado_project/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp"]"\
+  ]
+  foreach ifile $files {
+    if { ![file isfile $ifile] } {
+      puts " Could not find local file $ifile "
+      set status false
+    }
+  }
+
+  set files [list \
  "[file normalize "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"]"\
+ "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"]"\
@@ -33,11 +44,9 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/top.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/Board.vhd"]"\
- "[file normalize "$origin_dir/src/vhdl/MicroblazeNexysWrapper.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/VgaTest.vhd"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram_axi_lite/blk_mem_axi_lite.xci"]"\
  "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram_axi/blk_mem_axi.xci"]"\
- "[file normalize "$origin_dir/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"]"\
  "[file normalize "$origin_dir/src/constraints/Nexys_A7_100T-Master.xdc"]"\
  "[file normalize "$origin_dir/src/simulations/tb_SobelFilter.vhd"]"\
   ]
@@ -186,6 +195,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/ips/clk_wiz_0/clk_wiz_0.xci"] \
+ [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/frame_buffer/blk_mem_gen_1.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/vga_clk/vga_clk_gen.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/clk_gen/clk_generator.xci"] \
@@ -200,7 +210,6 @@ set files [list \
  [file normalize "${origin_dir}/src/vhdl/OV7670/rtl/vga/vga_controller.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/top.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/Board.vhd"] \
- [file normalize "${origin_dir}/src/vhdl/MicroblazeNexysWrapper.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/VgaTest.vhd"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram_axi_lite/blk_mem_axi_lite.xci"] \
  [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram_axi/blk_mem_axi.xci"] \
@@ -209,6 +218,15 @@ add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
 set file "$origin_dir/ips/clk_wiz_0/clk_wiz_0.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
+set file "$origin_dir/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
@@ -299,11 +317,6 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "$origin_dir/src/vhdl/MicroblazeNexysWrapper.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
 set file "$origin_dir/src/vhdl/VgaTest.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -336,27 +349,6 @@ set obj [get_filesets sources_1]
 set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
 set_property -name "top" -value "Board" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
-
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
-set files [list \
- [file normalize "${origin_dir}/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"] \
-]
-add_files -norecurse -fileset $obj $files
-
-# Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/src/vhdl/OV7670/ip/bram/blk_mem_gen_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
-
-
-# Set 'sources_1' fileset file properties for local files
-# None
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -407,7 +399,20 @@ set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Set 'utils_1' fileset object
 set obj [get_filesets utils_1]
-# Empty (no sources present)
+# Add local files from the original project (-no_copy_sources specified)
+set files [list \
+ [file normalize "${origin_dir}/vivado_project/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp" ]\
+]
+set added_files [add_files -fileset utils_1 $files]
+
+# Set 'utils_1' fileset file properties for remote files
+# None
+
+# Set 'utils_1' fileset file properties for local files
+set file "synth_1/Board.dcp"
+set file_obj [get_files -of_objects [get_filesets utils_1] [list "*$file"]]
+set_property -name "netlist_only" -value "0" -objects $file_obj
+
 
 # Set 'utils_1' fileset properties
 set obj [get_filesets utils_1]
@@ -737,6 +742,7 @@ if { $obj != "" } {
 }
 set obj [get_runs synth_1]
 set_property -name "needs_refresh" -value "1" -objects $obj
+set_property -name "incremental_checkpoint" -value "$proj_dir/ClimbingGameHardware.srcs/utils_1/imports/synth_1/Board.dcp" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
