@@ -42,9 +42,9 @@ architecture Behavioral of Greyscale is
         signal R_in : unsigned(3 downto 0);
         signal G_in : unsigned(3 downto 0);
         signal B_in : unsigned(3 downto 0);
-
+        
         SIGNAL Grey_scaled : UNSIGNED(3 DOWNTO 0);
-
+        
 begin
   R_in <= unsigned(data_in(11 downto 8));
   G_in <= unsigned(data_in(7 downto 4));
@@ -57,11 +57,11 @@ begin
         R_scaled := unsigned(R_in) * to_unsigned(77, 8);
     G_scaled := unsigned(G_in) * to_unsigned(150, 8);
     B_scaled := unsigned(B_in) * to_unsigned(29, 8);
-
+    
     temp := R_scaled + G_scaled + B_scaled;
-
-            Grey_scaled <= temp(11 downto 8);
+            
+            Grey_scaled <= temp(11 downto 8);  
     end process;
-
+    
     data_out <= std_logic_vector(Grey_scaled & Grey_scaled & Grey_scaled);
 end Behavioral;
