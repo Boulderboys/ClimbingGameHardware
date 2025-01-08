@@ -17,7 +17,7 @@ ENTITY vga_controller IS
 
         --frame_buffer signals
         addrb : OUT STD_LOGIC_VECTOR(18 DOWNTO 0);
-        doutb : IN STD_LOGIC_VECTOR(11 DOWNTO 0) --pixel data
+        doutb : IN STD_LOGIC_VECTOR(0 DOWNTO 0) --pixel data
     );
 END vga_controller;
 
@@ -64,12 +64,13 @@ BEGIN
     frame_finished <= '1' WHEN vsync_reg = V_MAX_LINE - 1 ELSE
         '0';
 
-    vga_r <= doutb(11 DOWNTO 8) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_r <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
-    vga_g <= doutb(7 DOWNTO 4) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_g <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
-    vga_b <= doutb(3 DOWNTO 0) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    vga_b <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
+        
 
     vsync_next <= 0 WHEN frame_finished = '1' AND start = '1' ELSE
         vsync_reg + 1 WHEN line_finished = '1' AND start = '1' ELSE

@@ -1,5 +1,5 @@
 // (c) Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
-// (c) Copyright 2022-2024 Advanced Micro Devices, Inc. All rights reserved.
+// (c) Copyright 2022-2025 Advanced Micro Devices, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of AMD and is protected under U.S. and international copyright
@@ -56,11 +56,12 @@
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
 blk_mem_gen_0 your_instance_name (
   .clka(clka),    // input wire clka
-  .ena(ena),      // input wire ena
   .wea(wea),      // input wire [0 : 0] wea
-  .addra(addra),  // input wire [9 : 0] addra
-  .dina(dina),    // input wire [11 : 0] dina
-  .douta(douta)  // output wire [11 : 0] douta
+  .addra(addra),  // input wire [18 : 0] addra
+  .dina(dina),    // input wire [0 : 0] dina
+  .clkb(clkb),    // input wire clkb
+  .addrb(addrb),  // input wire [18 : 0] addrb
+  .doutb(doutb)  // output wire [0 : 0] doutb
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 

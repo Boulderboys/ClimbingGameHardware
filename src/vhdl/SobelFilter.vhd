@@ -17,26 +17,18 @@
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
-
-
-package my_types_pkg is
-  subtype pixel_t is integer range 0 to 255;
-end package;
-
-library work;
-use work.my_types_pkg.all;
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+USE ieee.numeric_std.ALL;
 
 
 entity SobelFilter is
   Port (
         CLK : in STD_LOGIC;
         RESET : in STD_LOGIC;
-        PIXEL_IN: in pixel_t;
+        PIXEL_IN: in STD_LOGIC_VECTOR(11 downto 0);
         VALID_IN: in STD_LOGIC;
-        PIXEL_OUT: out pixel_t;
+        PIXEL_OUT: out STD_LOGIC;
         VALID_OUT: out STD_LOGIC
          );
 end SobelFilter;
@@ -50,12 +42,12 @@ architecture Behavioral of SobelFilter is
                                      (0, 0, 0), 
                                      (-1, -2, -1));
     
-    type line_buffer_t is array(0 to 2, 0 to 479) of pixel_t;
+    type line_buffer_t is array(0 to 2, 0 to 479) of integer range 0 to 3840;
     signal line_buffer : line_buffer_t := (others => (others => 0));
     signal window : Sobel_2d_array := (others => (others => 0));
     
-    signal row : integer range 0 to 639 := 0;
-    signal col : integer range 0 to 479 := 0;
+    signal row : std_logic_vector(9 downto 0):= (others => '0');
+    signal col : std_logic_vector(8 downto 0):= (others => '0');
     
     signal sumx, sumy, result : integer := 0;
     signal valid_pixel : STD_LOGIC := '0';
@@ -68,24 +60,24 @@ begin
             if RESET = '1' then
                 line_buffer <= (others => (others => 0));
                 window <= (others => (others => 0));
-                row <= 0;
-                col <= 0;
+                row <= (OTHERS => '0');
+                col <= (OTHERS => '0');
                 valid_pixel <= '0';
              elsif VALID_IN = '1' then
-                line_buffer(2,col) <= line_buffer(1,col);
-                line_buffer(1,col) <= line_buffer(0,col);
-                line_buffer(0, col) <= PIXEL_IN;
+                line_buffer(2,TO_INTEGER(unsigned(col))) <= line_buffer(1,to_integer(unsigned(col)));
+                line_buffer(1,TO_INTEGER(unsigned(col))) <= line_buffer(0,TO_INTEGER(unsigned(col)));
+                line_buffer(0, TO_INTEGER(unsigned(col))) <= to_integer(unsigned(PIXEL_IN));
                 
-                if col >= 2 and row >= 2 then
-                  window(0,0) <= line_buffer(2,col - 2);
-                  window(0,1) <= line_buffer(2,col - 1);
-                  window(0,2) <= line_buffer(2,col);
-                  window(1,0) <= line_buffer(1,col - 2);
-                  window(1,1) <= line_buffer(1,col - 1);
-                  window(1,2) <= line_buffer(1,col);
-                  window(2,0) <= line_buffer(0,col - 2);
-                  window(2,1) <= line_buffer(0,col - 1);
-                  window(2,2) <= line_buffer(0,col);
+                if unsigned(col) >= 2 and unsigned(row) >= 2 then
+                  window(0,0) <= line_buffer(2, to_integer(unsigned(col)-2));
+                  window(0,1) <= line_buffer(2,to_integer(unsigned(col)-1));
+                  window(0,2) <= line_buffer(2,to_integer(unsigned(col)));
+                  window(1,0) <= line_buffer(1,to_integer(unsigned(col)-2));
+                  window(1,1) <= line_buffer(1,to_integer(unsigned(col)-1));
+                  window(1,2) <= line_buffer(1,to_integer(unsigned(col)));
+                  window(2,0) <= line_buffer(0,to_integer(unsigned(col)-2));
+                  window(2,1) <= line_buffer(0,to_integer(unsigned(col)-1));
+                  window(2,2) <= line_buffer(0,to_integer(unsigned(col)));
                   
                   sumx <= 0;
                   sumy <= 0;
@@ -98,10 +90,10 @@ begin
                   
                   
               result <= abs(sumx) + abs(sumy);
-              if result > 255 then
-                PIXEL_OUT <= 255;
+              if result > 3839 then
+                PIXEL_OUT <= '1';
               else
-                PIXEL_OUT <= result;
+                PIXEL_OUT <= '0';
               end if;
     
               valid_pixel <= '1';
@@ -109,14 +101,14 @@ begin
               valid_pixel <= '0';
             end if;
     
-            if col < 479 then
-              col <= col + 1;
+            if TO_INTEGER(unsigned(col)) < 479 then
+              col <= std_logic_vector(unsigned(col) + 1);
             else
-              col <= 0;
-              if row < 639 then
-                row <= row + 1;
+              col <= (OTHERS => '0');
+              if unsigned(row) < 639 then
+                row <= std_logic_vector(unsigned(row) + 1);
               else
-                row <= 0;
+                row <= (OTHERS => '0');
               end if;
             end if;
           end if;
