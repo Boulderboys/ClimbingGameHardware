@@ -102,7 +102,7 @@ ARCHITECTURE rtl OF OV7670Top IS
     
     
     SIGNAL sobel_pixel_in : STD_LOGIC_VECTOR(11 downto 0);
-    SIGNAL sobel_pixel_out : STD_LOGIC := '0';
+    SIGNAL sobel_pixel_out : STD_LOGIC_vector(0 downto 0 );
     SIGNAL sobel_valid_in : STD_LOGIC := '0';
     SIGNAL sobel_valid_out : STD_LOGIC := '0';
     SIGNAL reset_sobel : STD_LOGIC := '0';
@@ -126,15 +126,7 @@ ARCHITECTURE rtl OF OV7670Top IS
     SIGNAL enb1 : STD_LOGIC := '0';
     SIGNAL addrb1 : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
     SIGNAL doutb1 : STD_LOGIC_VECTOR(11 DOWNTO 0) := (OTHERS => '0');
-      
-
-    SIGNAL enb0 : STD_LOGIC := '0';
-    SIGNAL addra0 : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL wea0 : STD_LOGIC_VECTOR(0 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL dina0 : STD_LOGIC_VECTOR(0 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL sobeloutput : STD_LOGIC_VECTOR(0 downto 0) := (OTHERS => '0');
-    SIGNAL addrb0 : STD_LOGIC_VECTOR(18 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL doutb0 : STD_LOGIC_VECTOR(0 DOWNTO 0) := (OTHERS => '0');
+     
 
     SIGNAL frame_finished : STD_LOGIC := '0';
 BEGIN
@@ -149,7 +141,7 @@ BEGIN
             else
                 frame_buffer_out_processing <= (others => '0');
                 
-                frame_buffer_out_vga <= doutb0;
+                frame_buffer_out_vga <= sobel_pixel_out;
             end if;
             buf1_vsync <= ov7670_vsync;
             buf2_vsync <= buf1_vsync;
@@ -212,9 +204,9 @@ BEGIN
     (
         CLK => clk,
         RESET => '0',
-        PIXEL_IN => dina1,
-        VALID_IN => sobel_valid_in,
-        PIXEL_OUT => sobel_pixel_out,
+        PIXEL_IN => sobel_pixel_in,
+        VALID_IN => '1',
+        PIXEL_OUT => sobel_pixel_out(0),
         VALID_OUT => sobel_valid_out
     );
     
@@ -240,17 +232,6 @@ BEGIN
         doutb => sobel_pixel_in
     );
     
-    -- filter in vga out
-    buffer_filter_to_vga : blk_mem_gen_0
-    PORT MAP(
-        clka => clk,
-        wea => wea0,
-        addra => addra0,
-        dina => sobeloutput,
-        clkb => pxl_clk,
-        addrb => addrb0,
-        doutb => doutb0
-     );
     
     ov7670_capture : ENTITY work.ov7670_capture(rtl) PORT MAP(
         clk => clk,

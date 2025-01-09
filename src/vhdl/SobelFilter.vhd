@@ -49,7 +49,7 @@ architecture Behavioral of SobelFilter is
     signal row : std_logic_vector(9 downto 0):= (others => '0');
     signal col : std_logic_vector(8 downto 0):= (others => '0');
     
-    signal sumx, sumy, result : integer := 0;
+    signal sumx, sumy, result : integer range -10000 to 10000 := 0;
     signal valid_pixel : STD_LOGIC := '0';
 
 begin
@@ -63,12 +63,12 @@ begin
                 row <= (OTHERS => '0');
                 col <= (OTHERS => '0');
                 valid_pixel <= '0';
-             elsif VALID_IN = '1' then
+             elsif VALID_IN = '1'  then
                 line_buffer(2,TO_INTEGER(unsigned(col))) <= line_buffer(1,to_integer(unsigned(col)));
                 line_buffer(1,TO_INTEGER(unsigned(col))) <= line_buffer(0,TO_INTEGER(unsigned(col)));
                 line_buffer(0, TO_INTEGER(unsigned(col))) <= to_integer(unsigned(PIXEL_IN));
                 
-                if unsigned(col) >= 2 and unsigned(row) >= 2 then
+                if unsigned(col) >= 2 and unsigned(row) >= 2 and unsigned(col) <= 479 and unsigned(row) <= 639then
                   window(0,0) <= line_buffer(2, to_integer(unsigned(col)-2));
                   window(0,1) <= line_buffer(2,to_integer(unsigned(col)-1));
                   window(0,2) <= line_buffer(2,to_integer(unsigned(col)));
@@ -90,7 +90,7 @@ begin
                   
                   
               result <= abs(sumx) + abs(sumy);
-              if result > 3839 then
+              if result > 4094 then  -- 3839
                 PIXEL_OUT <= '1';
               else
                 PIXEL_OUT <= '0';

@@ -45,6 +45,7 @@ ARCHITECTURE rtl OF vga_controller IS
     SIGNAL line_finished : STD_LOGIC := '0';
     SIGNAL frame_finished : STD_LOGIC := '0';
 
+    signal test: std_logic := '1';
 BEGIN
     addrb <= STD_LOGIC_VECTOR(bram_address_reg);
 
@@ -63,13 +64,22 @@ BEGIN
 
     frame_finished <= '1' WHEN vsync_reg = V_MAX_LINE - 1 ELSE
         '0';
-
-    vga_r <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+    
+    -- greyscale
+--    vga_r <= doutb(11 downto 8) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+--        "0000";
+--    vga_g <= doutb(11 downto 8) WHEN hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+--        "0000";
+--    vga_b <= doutb(11 downto 8) WHEN  hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
+--        "0000";
+     -- sobel version   
+            vga_r <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
     vga_g <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
     vga_b <= "1111" WHEN doutb(0) = '1' AND hsync_reg >= 0 AND vsync_reg >= 0 AND hsync_reg < FRAME_WIDTH AND vsync_reg < FRAME_HEIGHT ELSE --left upper corner
         "0000";
+        
         
 
     vsync_next <= 0 WHEN frame_finished = '1' AND start = '1' ELSE
